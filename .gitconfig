@@ -1,0 +1,17 @@
+[username]
+    email = nerdalej@gmail.com
+    username = alej
+[core]
+    editor = vim 
+[color] # colorize output
+    diff = auto
+    status = auto
+    branch = auto
+    interactive = auto
+    ui = true
+    pager = true
+[credential] # cache credentials
+    helper = cache --timeout=3600
+[user]
+	name = alej
+	email = nerdalej@gmail.com
