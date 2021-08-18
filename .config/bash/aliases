@@ -1,0 +1,26 @@
+#!/bin/bash
+alias vim="nvim"
+
+alias lla='ls -la'
+
+# enables colored print
+alias ls='ls --color=auto'
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# confirm before overwriting something
+alias cp="cp -i"
+alias mv='mv -i'
+alias rm='rm -i'
+
+# replace ls with lsd
+alias ls='lsd --group-dirs first'
+# replace tree with lsd
+alias tree='lsd --tree'
+
+# dotfiles git repo
+alias config='/usr/bin/git --git-dir=$HOME/.dotfiles-git-config/ --work-tree=$HOME'
