@@ -15,7 +15,7 @@ FOREING_TOOL_REPO_DIR="./foreing-tool-repos"
 
 sudo apt install bash git vim neovim curl
 
-mkdir $FOREING_TOOL_REPO_DIR
+[! -d $FOREING_TOOL_REPO_DIR ] && mkdir $FOREING_TOOL_REPO_DIR
 git clone https://github.com/ryanoasis/nerd-fonts.git $FOREING_TOOL_REPO_DIR 
 
 $FOREING_TOOL_REPO_DIR/nerd-fornts/install.sh "Mononoki Nerd Font" "Ubuntu Mono Nerd Font" 
