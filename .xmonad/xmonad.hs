@@ -18,6 +18,7 @@ import XMonad.Layout.ThreeColumns ( ThreeCol(ThreeCol) )
 import XMonad.Actions.MouseResize ( mouseResize )
 
 -- Layouts modifiers
+import XMonad.Layout.Hidden
 import XMonad.Layout.LayoutModifier ( ModifiedLayout )
 import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
 import XMonad.Layout.MultiToggle.Instances ( StdTransformers(NBFULL, MIRROR, NOBORDERS))
@@ -61,7 +62,7 @@ wideAccordion  = renamed [Replace "wideAccordion"]
 
 
 -- The layout hook
-myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts tall
+myLayoutHook = avoidStruts $ hiddenWindows $ mouseResize $ windowArrange $ T.toggleLayouts tall
                $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
              where
                myDefaultLayout =     withBorder myBorderWidth tall
@@ -73,15 +74,25 @@ myKeys :: [(String, X ())]
 myKeys  = 
     -- Xmonad
     [ ("M-S-q", io exitSuccess)     -- quits xmonad
+    -- power options
+    , ("M-S-r", spawn "systemctl reboot")     -- dmenu
+    , ("M-S-s", spawn "systemctl suspend")     -- dmenu
+    , ("M-S-p", spawn "systemctl poweroff")     -- dmenu
 
+    -- launch
     , ("M-o", spawn "dmenu_run -i -b -p \"Run: \"")     -- dmenu
     , ("M-<Return>", spawn "alacritty")     -- launch terminal. TODO: remove hardcoded terminal application
     , ("M-b", spawn "firefox")     -- launch browser. TODO: remove hardcoded firefox
 
-    , ("M-c", kill)     -- kill the currently focused window 
+    -- Windows
+    , ("M-m", withFocused hideWindow)     -- hides focused window 
+    , ("M-S-m", popOldestHiddenWindow) 
+    , ("M-c", kill)     -- kill the currently focused window
     , ("M-S-a", killAll)   -- Kill all windows on current workspace
 
     -- Workspaces
+    --, ("M-/", nextNonEmptyWS)  -- Switch focus to next non-empty monitor
+    --, ("M-S-/", prevNonEmptyWS)  -- Switch focus to previous non-empty monitor
     , ("M-.", nextWS)  -- Switch focus to next monitor
     , ("M-,", prevWS) ]  -- Switch focus to prev monitor
 
@@ -104,7 +115,7 @@ main = do
         , handleEventHook    = docksEventHook
         , startupHook        = setWMName "LG3D"
         --, layoutHook         = avoidStruts $ withBorder 2 $ ResizableTall 1 (3/100) (1/2) [] 
-        , layoutHook         = avoidStruts tall
+        , layoutHook         = avoidStruts $ hiddenWindows tall
         , normalBorderColor  = "#333333"
         , focusedBorderColor = "#AFAF87"
         , logHook = dynamicLogWithPP $ xmobarPP 
