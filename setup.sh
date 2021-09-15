@@ -114,7 +114,6 @@ if ! command_exists restup; then # or rustup bin dir doesnt exists
 fi
 $sh_c "${RUST_BIN_DIR}rustup override set stable"
 $sh_c "${RUST_BIN_DIR}rustup update stable"
-# TODO: add $HOME/.cargo/env to .profile
 
 # install deps
 $sush_c "apt -y install cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3"
@@ -237,17 +236,19 @@ else
 fi
 
 # xmonad deps
-$sush_c "apt -y install libx11-dev libxft-dev libxinerama-dev libxrandr-dev libxss-dev libxss-dev"
-$sh_c "cabal update"
-$sh_c "cabal install --package-env=$HOME/.config/xmonad --lib xmonad xmonad-contrib"
-$sh_c "cabal install --package-env=$HOME/.config/xmonad xmonad"
+if ! file_exists "$HOME/.cabal/bin/xmonad"; then
+    $sush_c "apt -y install libx11-dev libxft-dev libxinerama-dev libxrandr-dev libxss-dev libxss-dev"
+    $sh_c "cabal update"
+    $sh_c "cabal install --package-env=$HOME/.config/xmonad --lib xmonad xmonad-contrib"
+    $sh_c "cabal install --package-env=$HOME/.config/xmonad xmonad"
+fi
 
 # xmobad deps
-$sush_c "apt -y install libghc-alsa-core-dev libxpm-dev"
-#customize the extensions to remove those not needed :S
-$sh_c "cabal install xmobar --flags='all_extensions'"
-
-# binaries are installed in $HOME/.cabal/bin
+if ! file_exists "$HOME/.cabal/bin/xmobar"; then
+    $sush_c "apt -y install libghc-alsa-core-dev libxpm-dev"
+    #customize the extensions to remove those not needed :S
+    $sh_c "cabal install xmobar --flags='all_extensions'"
+fi
 
 #### neo vim 'plugupdate' 
 $sh_c "curl -fLo ${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
