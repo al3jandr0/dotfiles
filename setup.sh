@@ -44,6 +44,14 @@ package_installed() {
     dpkg -s "$@" > /dev/null 2>&1
 }
 
+file_exists() {
+    test -f "$@" > /dev/null 2>&1 
+}
+
+dir_exists() {
+    test -d "$@" > /dev/null 2>&1 
+}
+
 is_dry_run() {
     if [ -z "$DRY_RUN" ]; then
         return 1
@@ -53,13 +61,13 @@ is_dry_run() {
 }
 
 user=$(id -un 2>/dev/null || true)
-sush_c="sh -c" # super user shell command
+sush="sh" # super user shell command
 sh_c="sh -c"  # user shell command
 if [ "$user" != 'root' ]; then
     if command_exists sudo; then
-        sush_c='sudo sh -c'
+        sush='sudo sh'
     elif command_exists su; then
-        sush_c='su -c'
+        sush='su'
     else
         echo "Error: this installer needs the ability to run commands as root." >&2
         echo "Unable to find either "sudo" or "su" available to make this happen." >&2
@@ -71,8 +79,11 @@ if [ "$user" != 'root' ]; then
     fi
 fi
 
+sush_c="$sush -c"
+sush_s="$sush -s"
 if is_dry_run; then
     sush_c="echo"
+    sush_s="echo"
     sh_c="echo"
 fi
 
@@ -83,7 +94,7 @@ if [ ! -d "$PKG_DIR" ]; then
     $sh_c "mkdir $PKG_DIR"
 fi
 
-$sush_c "apt install sudo bash git vim neovim curl xmonad xmobar suckless-tools"
+$sush_c "apt -y install sudo bash git vim neovim curl wget ssh suckless-tools"
 
 #### Fonts
 NERD_FONTS_DIR="${FOREING_TOOL_REPO_DIR}nerd-fonts/"
@@ -101,14 +112,14 @@ RUST_BIN_DIR="$HOME/.cargo/bin/"
 if ! command_exists restup; then # or rustup bin dir doesnt exists
     $sh_c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path -y --profile minimal"
 fi
-#$sh_c ". $HOME/.cargo/env"
 $sh_c "${RUST_BIN_DIR}rustup override set stable"
 $sh_c "${RUST_BIN_DIR}rustup update stable"
-# TODO: add rustup to bashrc
+# TODO: add $HOME/.cargo/env to .profile
 
 # install deps
-$sush_c "apt install cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3"
+$sush_c "apt -y install cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3"
 
+# TODO: allow for updating alacritty
 ALACRITTY_DIR="${FOREING_TOOL_REPO_DIR}alacritty/"
 if [ ! -d "$ALACRITTY_DIR" ]; then
     $sh_c "git clone https://github.com/alacritty/alacritty.git $ALACRITTY_DIR"
@@ -129,62 +140,124 @@ fi
 # cp extra/completions/alacritty.bash ~/.bash_completion/alacritty
 # echo "source ~/.bash_completion/alacritty" >> ~/.bashrc
 
-##### LSD: download from release page
+#### LSD: download from release page
 # curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/Peltoche/lsd/releases/latest
 ## in case you'd like to programatically download the latest version
-if package_isntalled lsd; then
+if ! package_installed lsd; then
     $sh_c "wget https://github.com/Peltoche/lsd/releases/download/0.20.1/lsd_0.20.1_amd64.deb -O ${PKG_DIR}lsd.deb"
 fi
-$sush_c "apt install ${PKG_DIR}lsd.deb"
+$sush_c "apt -y install ${PKG_DIR}lsd.deb"
 
 #### Starship
 # Fetch and install the latest version of starship, if starship is already
 # installed it will be updated to the latest version.
-$sush_c  "curl -fsSL https://starship.rs/install.sh | sudo sh -- -y"
-
-# how about updating apt repo list for non-free libs
-# it requires some coordination between foreing keys stored in /uset/share/keyrings/
-#    and the repositories in /etc/apt/sources.list.d/ and 
-##  todo: update terminal selection to pick a default when allacritty is not available
+$sush_c  "curl -fsSL https://starship.rs/install.sh | sudo sh -s -- -y"
 
 #################
 #### DEV      ###
 #################
 
-#sudo apt install nodejs npm python3 pip3
-#
-##### yarn
-#curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-#echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-#sudo apt upgrade
-#sudo apt isntall yarn
-#
-##### python
-## alias python3 and pip3 to python and pip
-#
-##### Docker
-# INSTALL_SCRIPT_DIR="$HOME/installation-scripts/"
-## if file not here
-#curl -fsSL https://get.docker.com -o get-docker.sh
-#sudo sh get-docker.sh
-#
-##### Vscode
-## todo: if no command 'code, then get deb
-#curl -sS 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' -o $PKG_DIR/vscode.deb
-#sudo apt install $PKG_DDIR/vscode.deb
-#
-## jetbrains toolbox app
-#curl -sS 'https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-1.21.9712.tar.gz' -o $PKG_DIR/jetbrains-toolbox.tar.gz
-#sudo tar -xzf $PKG_DIR/jetbrains-toolbox.tar.gz -C /opt
-#
-#
-#
-## todo: include firefox non-esr:
-#
-## Lasttly: setup dotfiles repo
-#
-## run neo vim 'plugupdate' ?
+$sush_c "apt -y install nodejs npm python3"
+#### yarn
+if ! package_installed yarn; then
+    $sush_c "curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -"
+    $sush_c "echo 'deb https://dl.yarnpkg.com/debian/ stable main' | tee /etc/apt/sources.list.d/yarn.list"
+fi
+$sush_c "apt -y upgrade"
+$sush_c "apt -y install yarn"
 
+#### python
+$sush_c "apt -y install python3 python3-pip"
+$sush_c "ln -sf /usr/bin/pip3 /usr/bin/pip" 
+$sush_c "ln -sf /usr/bin/python3 /usr/bin/python" 
 
+#### Docker
+if ! command_exists docker; then
+    $sush_c "curl -fsSL https://get.docker.com | sh"
+    # docker needs root permisions. todo: find alternatives
+    $sush_c "groupadd docker"
+    $sush_c "usermod -aG docker $user"
+fi
 
+#### Vscode
+if ! package_installed code; then
+    $sh_c "wget 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' -O ${PKG_DIR}vscode.deb"
+    $sush_c "apt -y install ${PKG_DIR}vscode.deb"
+fi
 
+#### jetbrains toolbox app
+#todo: figure out how to get the latest stable version
+if ! file_exists "/usr/local/bin/jetbrains-toolbox"; then
+    $sh_c "curl -sS 'https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-1.21.9712.tar.gz' -o ${PKG_DIR}jetbrains-toolbox.tar.gz"
+    $sh_c "tar -xzf ${PKG_DIR}jetbrains-toolbox.tar.gz -C ${PKG_DIR}"
+    $sh_c "rm ${PKG_DIR}jetbrains-toolbox.tar.gz"
+    $sush_c "mv ${PKG_DIR}jetbrains-toolbox-* /opt/jetbrains-toolbox"
+    $sush_c "chmod 755 /opt/jetbrains-toolbox"
+    $sush_c "chmod 755 /opt/jetbrains-toolbox/jetbrains-toolbox"
+    $sush_c "ln -sf /opt/jetbrains-toolbox/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox"
+fi
+
+#### non esr firefox
+if ! file_exists "/opt/firefox/firefox"; then
+    $sh_c "wget 'https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US' -O ${PKG_DIR}firefox"
+    $sush_c "tar -xjf ${PKG_DIR}firefox -C /opt/"  
+    $sush_c "chmod 755 ${PKG_DIR}firefox /opt/firefox"  
+    $sush_c "chmod 755 ${PKG_DIR}firefox /opt/firefox/firefox"  
+    $sush_c "ln -sf /opt/firefox/firefox /usr/local/bin/firefox"
+    $sush_c "update-alternatives --install /usr/bin/x-www-browser x-www-browser /opt/firefox/firefox 200 && sudo update-alternatives --set x-www-browser /opt/firefox/firefox"
+fi
+
+#### setup dotfiles repo
+# repo is not public so you may need to setup ssh keys beforehand
+if ! dir_exists "$HOME/.dotfiles-git-config"; then
+    $sh_c "git clone --bare git@gitlab.com:ale-j/dotfiles.git $HOME/.dotfiles-git-config"
+    $sh_c "/usr/bin/git --git-dir=$HOME/.dotfiles-git-config/ --work-tree=$HOME checkout --force"
+    $sh_c "/usr/bin/git --git-dir=$HOME/.dotfiles-git-config/ --work-tree=$HOME config --local status.showUntrackedFiles no"
+fi
+
+#### Xmonad v16.99 & xmobar v0.19 ?
+XMONAD_DIR="$HOME/.xmonad/"
+# Install cabal
+if ! command_exists cabal; then
+    $sh_c "curl -sS 'https://downloads.haskell.org/~cabal/cabal-install-3.6.0.0/cabal-install-3.6.0.0-x86_64-linux.tar.xz' | tar -xJ -C $PKG_DIR"
+    $sush_c "mv ${PKG_DIR}cabal /opt/"
+    $sush_c "ln -sf /opt/cabal /usr/local/bin/cabal"
+fi
+
+# sources are needed for xmonad version newer than 0.15
+if ! dir_exists "$XMONAD_DIR/xmonad"; then
+    $sh_c "git clone https://github.com/xmonad/xmonad $XMONAD_DIR" 
+    $sh_c "git clone https://github.com/xmonad/xmonad-contrib $XMONAD_DIR" 
+    #$sh_c "git -C $XMONAD_DIR/xmonad checkout 33a86c0cdb9aa481e23cc5527a997adef5e32d42"
+    #$sh_c "git -C $XMONAD_DIR/xmonad-contrib checkout 0c6fdf4e75dd4d31bc8423010fbabbab7c23ee03"
+else
+    # pulls latest. consider anchoring to the commmits above
+    $sh_c "git -C $XMONAD_DIR/xmonad pull"
+    $sh_c "git -C $NERD_FONTS_DIR/xmonad-contrib pull"
+fi
+
+# xmonad deps
+$sush_c "apt -y install libx11-dev libxft-dev libxinerama-dev libxrandr-dev libxss-dev libxss-dev"
+$sh_c "cabal update"
+$sh_c "cabal install --package-env=$HOME/.config/xmonad --lib xmonad xmonad-contrib"
+$sh_c "cabal install --package-env=$HOME/.config/xmonad xmonad"
+
+# xmobad deps
+$sush_c "apt -y install libghc-alsa-core-dev libxpm-dev"
+#customize the extensions to remove those not needed :S
+$sh_c "cabal install xmobar --flags='all_extensions'"
+
+# binaries are installed in $HOME/.cabal/bin
+
+#### neo vim 'plugupdate' 
+$sh_c "curl -fLo ${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+$sh_c "nvim +PlugInstall +qa"
+
+#### cleanup:
+$sush_c "apt update"
+$sush_c "apt -y upgrade"
+$sush_c "apt -y autoremove"
+
+#### Additional manual steps
+# Generare ssh keys
+# Install browser plugins
