@@ -1,5 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =3
-let g:netrw_dirhist_1='/home/ap/.xmonad/xmobar-git'
-let g:netrw_dirhist_2='/home/ap/.config/bash/aliases'
-let g:netrw_dirhist_3='/home/ap/.gnupg'
