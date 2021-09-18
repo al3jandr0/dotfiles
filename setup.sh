@@ -174,7 +174,7 @@ $sush_c "ln -sf /usr/bin/python3 /usr/bin/python"
 if ! command_exists docker; then
     $sush_c "curl -fsSL https://get.docker.com | sh"
     # docker needs root permisions. todo: find alternatives
-    $sush_c "groupadd docker"
+    $sush_c "groupadd -f docker"
     $sush_c "usermod -aG docker $user"
 fi
 
@@ -206,44 +206,72 @@ if ! file_exists "/opt/firefox/firefox"; then
     $sush_c "update-alternatives --install /usr/bin/x-www-browser x-www-browser /opt/firefox/firefox 200 && sudo update-alternatives --set x-www-browser /opt/firefox/firefox"
 fi
 
-#### setup dotfiles repo
-# repo is not public so you may need to setup ssh keys beforehand
+#### dotfiles
 if ! dir_exists "$HOME/.dotfiles-git-config"; then
-    $sh_c "git clone --bare git@gitlab.com:ale-j/dotfiles.git $HOME/.dotfiles-git-config"
+    $sh_c "git clone --bare https://gitlab.com/ale-j/dotfiles.git $HOME/.dotfiles-git-config"
+    #$sh_c "git clone --bare git@gitlab.com:ale-j/dotfiles.git $HOME/.dotfiles-git-config"
     $sh_c "/usr/bin/git --git-dir=$HOME/.dotfiles-git-config/ --work-tree=$HOME checkout --force"
     $sh_c "/usr/bin/git --git-dir=$HOME/.dotfiles-git-config/ --work-tree=$HOME config --local status.showUntrackedFiles no"
 fi
 
 #### Xmonad v16.99 & xmobar v0.19 ?
+# xmonad has a dependcy with dotfiles. it requiores xmonad.hs  you could create a dummy xmonad.sh
 XMONAD_DIR="$HOME/.xmonad/"
-# Install cabal
-if ! command_exists cabal; then
-    $sh_c "curl -sS 'https://downloads.haskell.org/~cabal/cabal-install-3.6.0.0/cabal-install-3.6.0.0-x86_64-linux.tar.xz' | tar -xJ -C $PKG_DIR"
-    $sush_c "mv ${PKG_DIR}cabal /opt/"
-    $sush_c "ln -sf /opt/cabal /usr/local/bin/cabal"
-fi
+#$sush_c "apt -y install haskell-platform" 
 
 # sources are needed for xmonad version newer than 0.15
 if ! dir_exists "$XMONAD_DIR/xmonad"; then
-    $sh_c "git clone https://github.com/xmonad/xmonad $XMONAD_DIR" 
-    $sh_c "git clone https://github.com/xmonad/xmonad-contrib $XMONAD_DIR" 
+    $sh_c "git clone https://github.com/xmonad/xmonad $XMONAD_DIR/xmonad" 
+    $sh_c "git clone https://github.com/xmonad/xmonad-contrib $XMONAD_DIR/xmonad-contrib" 
     #$sh_c "git -C $XMONAD_DIR/xmonad checkout 33a86c0cdb9aa481e23cc5527a997adef5e32d42"
     #$sh_c "git -C $XMONAD_DIR/xmonad-contrib checkout 0c6fdf4e75dd4d31bc8423010fbabbab7c23ee03"
 else
     # pulls latest. consider anchoring to the commmits above
-    $sh_c "git -C $XMONAD_DIR/xmonad pull"
-    $sh_c "git -C $NERD_FONTS_DIR/xmonad-contrib pull"
+    $sh_c "git -C ${XMONAD_DIR}xmonad pull"
+    $sh_c "git -C ${XMONAD_DIR}xmonad-contrib pull"
 fi
 
-# xmonad deps
-if ! file_exists "$HOME/.cabal/bin/xmonad"; then
+$sush_c "apt -y install haskell-stack"
+$sh_c "stack upgrade"
+
+# installing  xmonad from source using stacks yields a newer version 16.999
+if ! file_exists "$HOME/.local/bin/xmonad"; then
     $sush_c "apt -y install libx11-dev libxft-dev libxinerama-dev libxrandr-dev libxss-dev libxss-dev"
-    $sh_c "cabal update"
-    $sh_c "cabal install --package-env=$HOME/.config/xmonad --lib xmonad xmonad-contrib"
-    $sh_c "cabal install --package-env=$HOME/.config/xmonad xmonad"
+    $sh_c "cd $XMONAD_DIR && $HOME/.local/bin/stack init"
+    $sh_c "cd $XMONAD_DIR && $HOME/.local/bin/stack install"
+    $sh_c "cd $HOME"
 fi
 
-# xmobad deps
+# xmonad installation with cabal yiels v15 
+#if ! file_exists "$HOME/.cabal/bin/xmonad"; then
+#    $sush_c "apt -y install libx11-dev libxft-dev libxinerama-dev libxrandr-dev libxss-dev libxss-dev"
+#    $sh_c "cabal update"
+#    $sh_c "cabal install --package-env=${XMONAD_DIR}xmonad --lib xmonad xmonad-contrib"
+#    $sh_c "cabal install --overwrite-policy=always --package-env=${XMONAD_DIR}xmonad xmonad"
+#fi
+
+# commented out is installation of xmobar usign stack
+#if ! file_exists "$HOME/.local/bin/xmobar"; then
+#     $sush_c "apt -y install libghc-alsa-core-dev libxpm-dev"
+#    if [ ! -d "${FOREING_TOOL_REPO_DIR}xmobar" ]; then
+#        $sh_c "git clone https://github.com/jaor/xmobar.git ${FOREING_TOOL_REPO_DIR}xmobar"
+#    else
+#        $sh_c "git -C $NERD_FONTS_DIR pull"
+#    fi
+#    #TODO: checkout a label
+#    $sh_c "git -C ${FOREING_TOOL_REPO_DIR}xmobar checkout b8bcc61a632f49533ff476b3483cb7299866d5dc"
+#    $sh_c "cd ${FOREING_TOOL_REPO_DIR}xmobar && stack install --flag xmobar:all_extensions"
+#    $sh_c "cd $HOME"
+#fi
+
+# Install cabal
+#if ! command_exists cabal; then
+if ! file_exists "opt/cabal"; then
+    $sh_c "curl -sS 'https://downloads.haskell.org/~cabal/cabal-install-3.6.0.0/cabal-install-3.6.0.0-x86_64-linux.tar.xz' | tar -xJ -C $PKG_DIR"
+    $sush_c "mv ${PKG_DIR}cabal /opt/"
+    $sush_c "ln -sf /opt/cabal /usr/local/bin/cabal"
+fi
+# xmobar deps
 if ! file_exists "$HOME/.cabal/bin/xmobar"; then
     $sush_c "apt -y install libghc-alsa-core-dev libxpm-dev"
     #customize the extensions to remove those not needed :S
@@ -261,4 +289,9 @@ $sush_c "apt -y autoremove"
 
 #### Additional manual steps
 # Generare ssh keys
-# Install browser plugins
+echo "Generate ssh key:   ssh-keygen -t ed25519"
+echo "Copy to clipboard:  xclip -sel clip < ~/.ssh/id_ed25519.pub"
+
+# Install browser plugins. try firefox sync
+
+
