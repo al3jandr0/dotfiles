@@ -93,7 +93,7 @@ set noshowmode
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set expandtab                   " Use spaces instead of tabs.
 set smarttab                    " Be smart using tabs ;)
-set shiftwidth=4                " One tab == four spaces.
+set shiftwidth=4                " shift << or >> four spaces.
 set tabstop=4                   " One tab == four spaces.
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -197,6 +197,12 @@ set mouse=a
 " => Fix Sizing Bug With Alacritty Terminal
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "autocmd VimEnter * :silent exec "!kill -s SIGWINCH $PPID"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Convenient remappings 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Shift tab to isert an actual tab"
+inoremap <S-Tab> <C-V><Tab>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Splits and Tabbed Files
