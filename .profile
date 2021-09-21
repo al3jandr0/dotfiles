@@ -14,29 +14,9 @@ if [ -n "$BASH_VERSION" ]; then
     if [ -f "$HOME/.bashrc" ]; then
 	. "$HOME/.bashrc"
     fi
-fi
-# Added by Amplify CLI binary installer
-if [ -d "$HOME/.aplify/bin" ] ; then
-    PATH="$HOME/.amplify/bin:$PATH"
-fi
-
-# set PATH so it includes cabal-built (haskell) binaries if it exists
-if [ -d "$HOME/.cabal/bin" ] ; then
-    PATH="$HOME/.cabal/bin:$PATH"
-fi
-
-# sets PATH so it includes cargo tools (rust) if they exist
-if [ -d "$HOME/.cargo/bin" ] ; then
-    PATH="$HOME/.cargo/bin:$PATH"
-fi
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
+else
+    if [ -f "$HOME/.config/path" ]; then
+        . "$HOME/.config/path.sh"
+    fi
 fi
 

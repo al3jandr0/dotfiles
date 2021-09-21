@@ -95,6 +95,11 @@ if [ -f ~/.config/bash/aliases ]; then
     . ~/.config/bash/aliases
 fi
 
+# Updates PATH to include all user bin directoies
+if [ -f ~/.config/path.sh ]; then
+    . ~/.config/path.sh
+fi
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
