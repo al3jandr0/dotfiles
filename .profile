@@ -15,6 +15,10 @@ if [ -n "$BASH_VERSION" ]; then
 	. "$HOME/.bashrc"
     fi
 fi
+# Added by Amplify CLI binary installer
+if [ -d "$HOME/.aplify/bin" ] ; then
+    PATH="$HOME/.amplify/bin:$PATH"
+fi
 
 # set PATH so it includes cabal-built (haskell) binaries if it exists
 if [ -d "$HOME/.cabal/bin" ] ; then
@@ -35,3 +39,4 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+
