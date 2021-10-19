@@ -214,6 +214,10 @@ if ! dir_exists "$HOME/.dotfiles-git-config"; then
     $sh_c "/usr/bin/git --git-dir=$HOME/.dotfiles-git-config/ --work-tree=$HOME config --local status.showUntrackedFiles no"
 fi
 
+#######################################################
+####    Scripts below depend on dotfiles existing
+#######################################################
+
 #### Xmonad v16.99 & xmobar v0.19 ?
 # xmonad has a dependcy with dotfiles. it requiores xmonad.hs  you could create a dummy xmonad.sh
 XMONAD_DIR="$HOME/.xmonad/"
@@ -275,6 +279,7 @@ fi
 if ! file_exists "$HOME/.cabal/bin/xmobar"; then
     $sush_c "apt -y install libghc-alsa-core-dev libxpm-dev"
     #customize the extensions to remove those not needed :S
+    $sh_c "cabal update"
     $sh_c "cabal install xmobar --flags='all_extensions'"
 fi
 
@@ -287,11 +292,26 @@ $sush_c "apt update"
 $sush_c "apt -y upgrade"
 $sush_c "apt -y autoremove"
 
+# Sets dpi 
+dim=$(xdpyinfo | grep -oP 'dimensions:\s+\K\S+')
+case $dim in
+    1920x1080)
+        echo "Xft.dpi: 96" > $HOME/.Xresources
+        ;;
+    # 4K
+    3840x2160)
+        echo "Xft.dpi: 144" > $HOME/.Xresources
+        ;;
+esac
+
 #### Additional manual steps
 # Generare ssh keys
-echo "Generate ssh key:   ssh-keygen -t ed25519"
-echo "Copy to clipboard:  xclip -sel clip < ~/.ssh/id_ed25519.pub"
+cat >&2 <<-EOF
+Generate ssh key:   
+> ssh-keygen -t ed25519
+Copy to clipboard:
+> xclip -sel clip < ~/.ssh/id_ed25519.pub
+EOF
 
-# Install browser plugins. try firefox sync
 
 
