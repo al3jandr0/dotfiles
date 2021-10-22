@@ -290,6 +290,7 @@ if ! file_exists "$HOME/.cabal/bin/xmobar"; then
     $sh_c "cabal update"
     $sh_c "cabal install xmobar --flags='all_extensions'"
 fi
+$sush_c "lb -sf $HOME/.cabal/bin/xmobar /usr/local/bin/xmobar"
 
 #### neo vim 'plugupdate' 
 $sh_c "curl -fLo ${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
