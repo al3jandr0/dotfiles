@@ -1,11 +1,6 @@
 #!/bin/bash
 set -e
-# todo: add drivers shenanigans 
-#### debian out of the box has shitty resolution
 # todo: increase windows lock tiemout
-# choosing a I forgot its name load env
-# MISING:
-#   - dmenu
 
 FOREING_TOOL_REPO_DIR="$HOME/foreing-tool-repos/"
 PKG_DIR="$HOME/installation-packages/"
@@ -267,6 +262,19 @@ fi
 #    $sh_c "cd ${FOREING_TOOL_REPO_DIR}xmobar && stack install --flag xmobar:all_extensions"
 #    $sh_c "cd $HOME"
 #fi
+
+if ! file_exists "/usr/share/xsessions/xmonad.desktop"; then
+    sush_c "cat >/usr/share/xsessions/xmonad.desktop <<-EOF
+    [Desktop Entry]
+    Encoding=UTF-8
+    Name=XMonad
+    Comment=Lightweight tiling window manager
+    Exec=xmonad
+    Icon=xmonad.png
+    Type=XSession
+EOF"
+fi
+$sush_c "ln -sf $HOME/.local/bin/xmonad /usr/local/bin/xmonad"
 
 # Install cabal
 #if ! command_exists cabal; then
