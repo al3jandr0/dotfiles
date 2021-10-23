@@ -21,17 +21,17 @@ Config { font    = "xft:Mononoki:weight=bold:pixelsize=22,Font Awesome:pixelsize
                     , Run Date "<fc=#ee9a00>%H:%M</fc> %a %b %_d %Y" "date" 50 
                     -- Power
                     , Run BatteryP ["BAT0"]
-                        [ "--template" 	, "<acstatus>"
-                        , "--Low" 	, "10"
-                        , "--High" 	, "90"
-                        -- , "--low" 	, "#FF9F1C"
-                        -- , "--normal" 	, "#1A1B41"
-                        -- , "--high" 	, "#C2E7DA"
-                        , "--"
-                        , "-o"		, "BA: <left>%"
-                        , "-O"		, "AC: <left>%"
-                        , "-i"		, "AC: <left>%"
-                        ] 120 
+                    [ "--template", "<acstatus>"
+                    , "--Low"  , "10"
+                    , "--High" , "90"
+                    -- , "--low" 	, "#FF9F1C"
+                    -- , "--normal" 	, "#1A1B41"
+                    -- , "--high" 	, "#C2E7DA"
+                    , "--"
+                    , "-o" , "BA: <left>%"
+                    , "-O" , "AC: <left>%"
+                    , "-i" , "AC: <left>%"
+                    ] 120 
                     , Run UnsafeStdinReader
                     ]
        -- layout 
