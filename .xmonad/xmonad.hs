@@ -90,13 +90,20 @@ myKeys  =
     , ("M-c", kill)     -- kill the currently focused window
     , ("M-S-a", killAll)   -- Kill all windows on current workspace
 
-    -- Workspaces
+    -- Workspaces:
     --, ("M-/", nextNonEmptyWS)  -- Switch focus to next non-empty monitor
     --, ("M-S-/", prevNonEmptyWS)  -- Switch focus to previous non-empty monitor
     , ("M-.", nextWS)  -- Switch focus to next monitor
-    , ("M-,", prevWS) ]  -- Switch focus to prev monitor
+    , ("M-,", prevWS)  -- Switch focus to prev monitor
 
-
+    -- Specila function keys
+    , ("<XF86MonBrightnessUp>"  , spawn "brightnessctl --class backlight set +10%")
+    , ("<XF86MonBrightnessDown>", spawn "brightnessctl --class backlight set 10%-")
+    , ("<XF86AudioRaiseVolume>" , spawn "amixer set Master on && amixer set Master 20%+")
+    , ("<XF86AudioLowerVolume>" , spawn "amixer set Master 20%-")
+    , ("<XF86AudioMute>"        , spawn "amixer set Master toggle")
+    , ("<XF86KbdLightOnOff>"    , spawn "toggle-kb-backlight")
+    ]
 --clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
 --    where i = fromJust $ M.lookup ws myWorkspaceIndices
 
