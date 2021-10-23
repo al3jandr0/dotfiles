@@ -89,7 +89,7 @@ if [ ! -d "$PKG_DIR" ]; then
     $sh_c "mkdir $PKG_DIR"
 fi
 
-$sush_c "apt -y install sudo bash git vim neovim curl wget ssh suckless-tools"
+$sush_c "apt -y install sudo bash git vim neovim curl wget ssh suckless-tools brightnessctl brightness-udev"
 
 #### Fonts
 NERD_FONTS_DIR="${FOREING_TOOL_REPO_DIR}nerd-fonts/"
