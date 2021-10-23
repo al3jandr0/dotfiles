@@ -1,0 +1,6 @@
+#!/bin/bash
+DEVICE="*kbd_backlight"
+current=$(brightnessctl -d $DEVICE g)
+max=$(brightnessctl -d $DEVICE m)
+let new=max-current
+brightnessctl -d $DEVICE set $new
