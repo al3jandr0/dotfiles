@@ -89,7 +89,7 @@ if [ ! -d "$PKG_DIR" ]; then
     $sh_c "mkdir $PKG_DIR"
 fi
 
-$sush_c "apt -y install sudo bash git vim neovim curl wget ssh suckless-tools brightnessctl brightness-udev"
+$sush_c "apt -y install sudo bash git vim curl wget ssh suckless-tools brightnessctl brightness-udev"
 
 #### Fonts
 NERD_FONTS_DIR="${FOREING_TOOL_REPO_DIR}nerd-fonts/"
@@ -150,6 +150,10 @@ $sush_c  "curl -fsSL https://starship.rs/install.sh | sudo sh -s -- -y"
 #################
 #### DEV      ###
 #################
+
+#### neovim
+$sh_c "wget https://github.com/neovim/neovim/releases/download/stable/nvim.appimage -O ${PKG_DIR}nvim"
+$sh_c "install -D -t $HOME/.local/bin/ -m 755 ${$PKG_DIR}nvim"
 
 $sush_c "apt -y install nodejs npm python3"
 #### yarn

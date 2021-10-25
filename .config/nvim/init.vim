@@ -6,30 +6,16 @@ call plug#begin('~/.vim/plugged')
 
 "{{ The Basics }}
     Plug 'itchyny/lightline.vim'                       " Lightline statusbar
-"    Plug 'suan/vim-instant-markdown', {'rtp': 'after'} " Markdown Preview
-"    Plug 'frazrepo/vim-rainbow'
 "{{ File management }}
-"    Plug 'vifm/vifm.vim'                               " Vifm
 "    Plug 'scrooloose/nerdtree'                         " Nerdtree
 "    Plug 'tiagofumo/vim-nerdtree-syntax-highlight'     " Highlighting Nerdtree
 "    Plug 'ryanoasis/vim-devicons'                      " Icons for Nerdtree
-"{{ Productivity }}
-"    Plug 'vimwiki/vimwiki'                             " VimWiki 
-"    Plug 'jreybert/vimagit'                            " Magit-like plugin for vim
-"{{ Tim Pope Plugins }}
-"    Plug 'tpope/vim-surround'                          " Change surrounding marks
 "{{ Syntax Highlighting and Colors }}
-"    Plug 'PotatoesMaster/i3-vim-syntax'                " i3 config highlighting
-"    Plug 'kovetskiy/sxhkd-vim'                         " sxhkd highlighting
 Plug 'vim-python/python-syntax'                    " Python highlighting
 Plug 'sheerun/vim-polyglot'                             " supposedly beter syntax highlighting
-"Plug 'tanvirtin/monokai.nvim'
+Plug 'tanvirtin/monokai.nvim'
 Plug 'junegunn/seoul256.vim'
 "    Plug 'ap/vim-css-color'                            " Color previews for CSS
-"{{ Junegunn Choi Plugins }}
-"    Plug 'junegunn/goyo.vim'                           " Distraction-free viewing
-"    Plug 'junegunn/limelight.vim'                      " Hyperfocus on a range
-"    Plug 'junegunn/vim-emoji'                          " Vim needs emojis!
 
 " Languages
 "Plug 'autozimu/LanguageClient-neovim', {
@@ -58,8 +44,9 @@ set noswapfile                  " No swap
 set t_Co=256                    " Set if term supports 256 colors.
 set number relativenumber       " Display line numbers
 set clipboard=unnamedplus       " Copy/paste between vim and other programs.
+syntax on
 syntax enable
-colorscheme default
+colorscheme monokai_pro 
 let g:rehash256 = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
