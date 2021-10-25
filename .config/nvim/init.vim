@@ -32,17 +32,13 @@ Plug 'junegunn/seoul256.vim'
 "    Plug 'junegunn/vim-emoji'                          " Vim needs emojis!
 
 " Languages
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh' }                         " Haskell language server
-
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'autozimu/LanguageClient-neovim', {
+"    \ 'branch': 'next',
+"    \ 'do': 'bash install.sh' }                         " Haskell language server
 
 call plug#end()
 
 filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-" filetype plugin on
 
 " Brief help
 " :PluginList       - lists configured plugins
@@ -50,14 +46,11 @@ filetype plugin indent on    " required
 " :PluginSearch foo - searches for foo; append `!` to refresh local cache
 " :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
 
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "set path+=**					" Searches current directory recursively.
-"set wildmenu					" Display all matches when tab complete.
+set wildmenu					" Display all matches when tab complete.
 "set incsearch                   " Incremental search
 "set hidden                      " Needed to keep multiple buffers open
 set nobackup                    " No auto backups
@@ -66,13 +59,8 @@ set t_Co=256                    " Set if term supports 256 colors.
 set number relativenumber       " Display line numbers
 set clipboard=unnamedplus       " Copy/paste between vim and other programs.
 syntax enable
+colorscheme default
 let g:rehash256 = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Remap Keys
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Remap ESC to ii
-":imap ii <Esc>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Status Line
@@ -95,6 +83,9 @@ set expandtab                   " Use spaces instead of tabs.
 set smarttab                    " Be smart using tabs ;)
 set shiftwidth=4                " shift << or >> four spaces.
 set tabstop=4                   " One tab == four spaces.
+"Shift tab to isert an actual tab"
+inoremap <S-Tab> <C-V><Tab>
+"TODO: indicate actual tabs with a visual indication
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => NERDTree
@@ -160,123 +151,8 @@ highlight Visual           guifg=#dfdfdf ctermfg=1    guibg=#1c1f24 ctermbg=none
 " highlight xmlEndTag        ctermfg=114     ctermbg=none    cterm=none
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vifm
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"map <Leader>vv :Vifm<CR>
-"map <Leader>vs :VsplitVifm<CR>
-"map <Leader>sp :SplitVifm<CR>
-"map <Leader>dv :DiffVifm<CR>
-"map <Leader>tv :TabVifm<CR>
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VimWiki
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"let g:vimwiki_list = [{'path': '~/vimwiki/',
-"                      \ 'syntax': 'markdown', 'ext': '.md'}]
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vim-Instant-Markdown
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"let g:instant_markdown_autostart = 0         " Turns off auto preview
-"let g:instant_markdown_browser = "surf"      " Uses surf for preview
-"map <Leader>md :InstantMarkdownPreview<CR>   " Previews .md file
-"map <Leader>ms :InstantMarkdownStop<CR>      " Kills the preview
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Open terminal inside Vim
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"map <Leader>tt :vnew term://fish<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Mouse Scrolling
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set mouse=nicr
 set mouse=a
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Fix Sizing Bug With Alacritty Terminal
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"autocmd VimEnter * :silent exec "!kill -s SIGWINCH $PPID"
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Convenient remappings 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"Shift tab to isert an actual tab"
-inoremap <S-Tab> <C-V><Tab>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Splits and Tabbed Files
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"set splitbelow splitright
-"
-"" Remap splits navigation to just CTRL + hjkl
-"nnoremap <C-h> <C-w>h
-"nnoremap <C-j> <C-w>j
-"nnoremap <C-k> <C-w>k
-"nnoremap <C-l> <C-w>l
-"
-"" Make adjusing split sizes a bit more friendly
-"noremap <silent> <C-Left> :vertical resize +3<CR>
-"noremap <silent> <C-Right> :vertical resize -3<CR>
-"noremap <silent> <C-Up> :resize +3<CR>
-"noremap <silent> <C-Down> :resize -3<CR>
-"
-"" Change 2 split windows from vert to horiz or horiz to vert
-"map <Leader>th <C-w>t<C-w>H
-"map <Leader>tk <C-w>t<C-w>K
-"
-"" Removes pipes | that act as seperators on splits
-"set fillchars+=vert:\ 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Other Stuff
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"let g:python_highlight_all = 1
-"
-"au! BufRead,BufWrite,BufWritePost,BufNewFile *.org 
-"au BufEnter *.org            call org#SetOrgFileType()
-"
-"set guioptions-=m  "remove menu bar
-"set guioptions-=T  "remove toolbar
-"set guioptions-=r  "remove right-hand scroll bar
-"set guioptions-=L  "remove left-hand scroll bar
-"set guifont=SauceCodePro\ Nerd\ Font:h15
-"set guifont=Mononoki\ Nerd\ Font:h15
-"set guifont=JetBrains\ Mono:h15
-
-"let g:neovide_transparency=0.95
-
-" ---------------------------------------------------------------
-"  Haskell language client plugin 
-"  --------------------------------------------------------------
-" Required for operations modifying multiple buffers like rename.
-set hidden
-
-" let g:coc_disable_startup_warning = 1
-let g:LanguageClient_loggingLevel = 'INFO'
-let g:LanguageClient_loggingFile =  expand('/tmp/LanguageClient.log')
-let g:LanguageClient_serverStderr = expand('/tmp/LanguageServer.log')
-"set rtp+=~/.vim/pack/XXX/start/LanguageClient-neovim
-let g:LanguageClient_serverCommands = { 'haskell': ['haskell-language-server-wrapper', '--lsp'] }
-let g:LanguageClient_autoStart = 1
-
-nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-"map <Leader>lk :call LanguageClient#textDocument_hover()<CR>
-"map <Leader>lg :call LanguageClient#textDocument_definition()<CR>
-"map <Leader>lr :call LanguageClient#textDocument_rename()<CR>
-"map <Leader>lf :call LanguageClient#textDocument_formatting()<CR>
-"map <Leader>lb :call LanguageClient#textDocument_references()<CR>
-"map <Leader>la :call LanguageClient#textDocument_codeAction()<CR>
-"map <Leader>ls :call LanguageClient#textDocument_documentSymbol()<CR>
-
-let g:python_highlight_all = 1
-"colorscheme monokai
-"autocmd FileType python colorscheme monokai
-"colo seoul256
-autocmd BufEnter * colorscheme default
-autocmd BufEnter *.py colorscheme seoul256 
-
-set spell spelllang=en
-
-" 2 space tab required for yml files
-autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
