@@ -51,7 +51,7 @@ mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
 
 tall     = renamed [Replace "tall"]
            -- $ mySpacing 4
-           -- $ smartBorders
+           $ smartBorders
            $ ResizableTall 1 (3/100) (1/2) []
 threeCol = renamed [Replace "threeCol"]
            $ smartBorders
@@ -75,9 +75,9 @@ myKeys  =
     -- Xmonad
     [ ("M-S-q", io exitSuccess)     -- quits xmonad
     -- power options
-    , ("M-S-r", spawn "systemctl reboot")     -- dmenu
-    , ("M-S-s", spawn "systemctl suspend")     -- dmenu
-    , ("M-S-p", spawn "systemctl poweroff")     -- dmenu
+    , ("M-S-r", spawn "systemctl reboot") 
+    , ("M-S-s", spawn "systemctl suspend")
+    , ("M-S-p", spawn "systemctl poweroff")
 
     -- launch
     , ("M-o", spawn "dmenu_run -i -b -p \"Run: \"")     -- dmenu
