@@ -7,6 +7,7 @@ import XMonad.Actions.WithAll (sinkAll, killAll)
 
 import XMonad.Layout.Accordion ( Accordion(Accordion) )
 
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
 import XMonad.Hooks.ManageDocks (avoidStruts, docksEventHook, manageDocks, ToggleStruts(..))
@@ -39,7 +40,6 @@ import XMonad.Util.SpawnOnce
 myBorderWidth :: Dimension
 myBorderWidth = 2           -- Sets border width for windows
 
-
 -- Below is a variation of the above except no borders are applied
 -- if fewer than two windows. So a single window has no gaps.
 --mySpacing :: Integer -> l a -> ModifiedLayout Spacing l a
@@ -48,27 +48,14 @@ myBorderWidth = 2           -- Sets border width for windows
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
 mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
 
-
 tall     = renamed [Replace "tall"]
            -- $ mySpacing 4
            $ smartBorders
            $ ResizableTall 1 (3/100) (1/2) []
-threeCol = renamed [Replace "threeCol"]
-           $ smartBorders
-           $ ThreeCol 1 (3/100) (1/2)
-tallAccordion  = renamed [Replace "tallAccordion"] Accordion
-wideAccordion  = renamed [Replace "wideAccordion"]
-           $ Mirror Accordion
-
 
 -- The layout hook
-myLayoutHook = avoidStruts $ hiddenWindows $ mouseResize $ windowArrange $ T.toggleLayouts tall
-               $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
-             where
-               myDefaultLayout =     withBorder myBorderWidth tall
-                                 ||| threeCol
-                                 ||| tallAccordion
-                                 ||| wideAccordion
+myLayoutHook = avoidStruts $ hiddenWindows $ T.toggleLayouts tall
+               $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) tall 
 
 myKeys :: [(String, X ())]
 myKeys  = 
@@ -89,7 +76,7 @@ myKeys  =
     , ("M-S-m", popOldestHiddenWindow) 
     , ("M-c", kill)     -- kill the currently focused window
     , ("M-S-a", killAll)   -- Kill all windows on current workspace
-
+    , ("M-<Space>", sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
     -- Workspaces:
     --, ("M-/", nextNonEmptyWS)  -- Switch focus to next non-empty monitor
     --, ("M-S-/", prevNonEmptyWS)  -- Switch focus to previous non-empty monitor
@@ -114,15 +101,15 @@ myKeys  =
 main :: IO ()
 main = do
     xmproc <- spawnPipe "xmobar $HOME/.config/xmobar/xmobarrc"
-    xmonad $ def 
+    xmonad $ ewmh def 
         { terminal           = "alacritty"
         , modMask            = mod4Mask
         , borderWidth        = 4 
         , manageHook         = manageDocks
-        , handleEventHook    = docksEventHook
+        -- , handleEventHook    = handleEventHook def <+> docksEventHook <+> fullscreenEventHook
+        , handleEventHook    = docksEventHook 
         , startupHook        = setWMName "LG3D"
-        --, layoutHook         = avoidStruts $ withBorder 2 $ ResizableTall 1 (3/100) (1/2) [] 
-        , layoutHook         = avoidStruts $ hiddenWindows tall
+        , layoutHook         = myLayoutHook
         , normalBorderColor  = "#333333"
         , focusedBorderColor = "#AFAF87"
         , logHook = dynamicLogWithPP $ xmobarPP 
