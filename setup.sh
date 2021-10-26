@@ -161,7 +161,7 @@ if ! package_installed yarn; then
     $sush_c "curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -"
     $sush_c "echo 'deb https://dl.yarnpkg.com/debian/ stable main' | tee /etc/apt/sources.list.d/yarn.list"
 fi
-$sush_c "apt -y upgrade"
+$sush_c "apt -y update"
 $sush_c "apt -y install yarn"
 
 #### python
@@ -300,11 +300,6 @@ $sush_c "lb -sf $HOME/.cabal/bin/xmobar /usr/local/bin/xmobar"
 $sh_c "curl -fLo ${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 $sh_c "nvim +PlugInstall +qa"
 
-#### cleanup:
-$sush_c "apt update"
-$sush_c "apt -y upgrade"
-$sush_c "apt -y autoremove"
-
 # Sets dpi 
 dim=$(xdpyinfo | grep -oP 'dimensions:\s+\K\S+')
 case $dim in
@@ -316,6 +311,19 @@ case $dim in
         echo "Xft.dpi: 144" > $HOME/.Xresources
         ;;
 esac
+
+#### Lutris - games on linux
+if ! package_isntalled lutris; then
+    $sush_c "curl -sS https://download.opensuse.org/repositories/home:/strycore/Debian_10/Release.key | apt-key add -"
+    $sush_c "echo 'deb http://download.opensuse.org/repositories/home:/strycore/Debian_10/ ./' | tee /etc/apt/sources.list.d/lutris.list"
+fi
+$sush_c "apt -y update"
+$sush_c "apt -y install lutris"
+
+#### cleanup:
+$sush_c "apt update"
+$sush_c "apt -y upgrade"
+$sush_c "apt -y autoremove"
 
 #### Additional manual steps
 # Generare ssh keys
