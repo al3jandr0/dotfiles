@@ -1,5 +1,5 @@
 # set PATH so it icnludes Aws Amplify binaries if they exists
-if [ -d "$HOME/.aplify/bin" ] && [[ $PATH != *"$HOME.aplify/bin"* ]]; then
+if [ -d "$HOME/.amplify/bin" ] && [[ $PATH != *"$HOME.amplify/bin"* ]]; then
     PATH="$HOME/.amplify/bin:$PATH"
 fi
 
