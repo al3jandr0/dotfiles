@@ -16,7 +16,7 @@ Config { font    = "xft:Mononoki:weight=bold:pixelsize=22,Font Awesome:pixelsize
                     -- Network
                       Run DynNetwork [ "--template" , "<up><dev>" ] 60
                     -- Audio
-                    , Run Alsa "default" "Master" []
+                    , Run Alsa "default" "Master" ["--template", "Vol: <volume>"]
                     -- Time and date
                     , Run Date "<fc=#ee9a00>%H:%M</fc> %a %b %_d %Y" "date" 50 
                     -- Power
