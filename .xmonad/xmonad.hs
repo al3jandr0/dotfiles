@@ -38,18 +38,13 @@ import XMonad.Util.Run (runProcessWithInput, safeSpawn, spawnPipe, hPutStrLn)
 import XMonad.Util.SpawnOnce
 
 myBorderWidth :: Dimension
-myBorderWidth = 2           -- Sets border width for windows
-
--- Below is a variation of the above except no borders are applied
--- if fewer than two windows. So a single window has no gaps.
---mySpacing :: Integer -> l a -> ModifiedLayout Spacing l a
---mySpacing i = spacingRaw True (Border i i i i) True (Border i i i i) True
+myBorderWidth = 4           -- Sets border width for windows
 
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
-mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
+mySpacing i = spacingRaw True (Border i i i i) True (Border i i i i) True
 
 tall     = renamed [Replace "tall"]
-           -- $ mySpacing 4
+           -- $ mySpacing 0 
            $ smartBorders
            $ ResizableTall 1 (3/100) (1/2) []
 
@@ -91,12 +86,6 @@ myKeys  =
     , ("<XF86AudioMute>"        , spawn "amixer set Master toggle")
     , ("<XF86KbdLightOnOff>"    , spawn "toggle-kb-backlight")
     ]
---clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
---    where i = fromJust $ M.lookup ws myWorkspaceIndices
-
---myStartupHook = do
---    spawnOnce "trayer --edge bottom --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x282c34  --height 22 &"
---    spawnOnce "volumeicon &"
 
 main :: IO ()
 main = do
@@ -104,14 +93,14 @@ main = do
     xmonad $ ewmh def 
         { terminal           = "alacritty"
         , modMask            = mod4Mask
-        , borderWidth        = 4 
+        , borderWidth        = myBorderWidth
         , manageHook         = manageDocks
         -- , handleEventHook    = handleEventHook def <+> docksEventHook <+> fullscreenEventHook
         , handleEventHook    = docksEventHook 
         , startupHook        = setWMName "LG3D"
         , layoutHook         = myLayoutHook
         , normalBorderColor  = "#333333"
-        , focusedBorderColor = "#AFAF87"
+        , focusedBorderColor = "#08E8DE" --"#AFAF87"
         , logHook = dynamicLogWithPP $ xmobarPP 
               { ppOutput = hPutStrLn xmproc
               , ppCurrent = xmobarColor "#98be65" "" . wrap "[" "]"           -- Current workspace
