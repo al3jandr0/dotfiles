@@ -73,7 +73,8 @@ set shiftwidth=4                " shift << or >> four spaces.
 set tabstop=4                   " One tab == four spaces.
 "Shift tab to isert an actual tab"
 inoremap <S-Tab> <C-V><Tab>
-"TODO: indicate actual tabs with a visual indication
+set list
+set listchars=tab:\|-           " Display actual tab characters
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => NERDTree
