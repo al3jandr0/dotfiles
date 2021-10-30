@@ -177,6 +177,14 @@ if ! command_exists docker; then
     $sush_c "usermod -aG docker $user"
 fi
 
+#### Docker-compose
+if ! command_exists docker-compose; then
+    DOCKER_COMPOSE_VERSION="1.29.2"
+    $sh_c "curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m) -o $HOME/.local/bin/docker-compose"
+    $sh_c "chmod 755 $HOME/.local/bin/docker-compose"
+    $sh_c "curl -L https://raw.githubusercontent.com/docker/compose/$DOCKER_COMPOSE_VERSION/contrib/completion/bash/docker-compose -o $HOME/.local/share/bash-completion/completions/docker-compose"
+fi
+
 #### Vscode
 if ! package_installed code; then
     $sh_c "wget 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' -O ${PKG_DIR}vscode.deb"
@@ -314,11 +322,18 @@ esac
 
 #### Lutris - games on linux
 if ! package_isntalled lutris; then
-    $sush_c "curl -sS https://download.opensuse.org/repositories/home:/strycore/Debian_10/Release.key | apt-key add -"
     $sush_c "echo 'deb http://download.opensuse.org/repositories/home:/strycore/Debian_10/ ./' | tee /etc/apt/sources.list.d/lutris.list"
+    $sush_c "curl -sS https://download.opensuse.org/repositories/home:/strycore/Debian_10/Release.key | apt-key add -"
+    # Instructions missing
+    $sush_c "dpkg --add-architecture i386"
+    # if Nvidia
+    #$sush_c "add-apt-repository ppa:graphics-drivers/ppa"
+    # if intel or AMD
+    #$sush_c "add-apt-repository ppa:kisak/kisak-mesa"
+
 fi
 $sush_c "apt -y update"
-$sush_c "apt -y install lutris"
+$sush_c "apt -y install libfreetype6:i386 wine64 wine32 lutris"
 
 #### cleanup:
 $sush_c "apt update"
