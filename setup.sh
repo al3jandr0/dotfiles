@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
-# todo: increase windows lock tiemout
+#todo: replace apt-key with trusted.gpg.d
+#      Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d
+#      instead (see apt-key(8))
 
 FOREING_TOOL_REPO_DIR="$HOME/foreing-tool-repos/"
 PKG_DIR="$HOME/installation-packages/"
@@ -213,6 +215,17 @@ if ! file_exists "/opt/firefox/firefox"; then
     $sush_c "update-alternatives --install /usr/bin/x-www-browser x-www-browser /opt/firefox/firefox 200 && sudo update-alternatives --set x-www-browser /opt/firefox/firefox"
 fi
 
+#### virtualbox
+if ! package_installed virtualbox; then
+    $sush_c "curl -sS https://www.virtualbox.org/download/oracle_vbox.asc | apt-key add -"
+    $sush_c "curl -sS https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -"
+    $sush_c "add-apt-repository deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+    $sush_c "'deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib' > /etc/apt/sources.list.d/virtualbox.list"
+    $sush_c "apt update" 
+fi
+$sush_c "apt -y install virtualbox-6.1"
+
+
 #### dotfiles
 if ! dir_exists "$HOME/.dotfiles-git-config"; then
     $sh_c "git clone --bare https://gitlab.com/ale-j/dotfiles.git $HOME/.dotfiles-git-config"
@@ -322,15 +335,16 @@ esac
 
 #### Lutris - games on linux
 if ! package_isntalled lutris; then
+    #todo: DEbian_11 ?
     $sush_c "echo 'deb http://download.opensuse.org/repositories/home:/strycore/Debian_10/ ./' | tee /etc/apt/sources.list.d/lutris.list"
     $sush_c "curl -sS https://download.opensuse.org/repositories/home:/strycore/Debian_10/Release.key | apt-key add -"
     # Instructions missing
     $sush_c "dpkg --add-architecture i386"
     # if Nvidia
+    # these need update.  It is better to download the driver from nvidia directly
     #$sush_c "add-apt-repository ppa:graphics-drivers/ppa"
     # if intel or AMD
     #$sush_c "add-apt-repository ppa:kisak/kisak-mesa"
-
 fi
 $sush_c "apt -y update"
 $sush_c "apt -y install libfreetype6:i386 wine64 wine32 lutris"
