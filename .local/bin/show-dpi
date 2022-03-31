@@ -1,0 +1,6 @@
+#!/bin/sh
+# displays screen dpi (set xconfig or xrandr) and font dpi
+echo "xdpyinfo | grep -B2 resolution"
+xdpyinfo | grep -B2 resolution
+echo "xrdb -query | grep dpi"
+xrdb -query | grep dpi
