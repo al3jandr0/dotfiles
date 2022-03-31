@@ -71,7 +71,7 @@ if [[ ${#monitors[@]} -eq 0 ] || [ -z ${monitors[@]} ]]; then
     >&2 echo "No connected monitors found"
     exit 1
 fi
-echo "${monitors[0]}"
+
 # Given an array of monitor strings (see string format above), returns the one with most pixelsnamed
 function findLargestMonitor() {
     local monitors=$1
