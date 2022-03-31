@@ -1,0 +1,139 @@
+#!/bin/bash
+# todo: handle ties. In case of a tie choose preffered, if none is preffered then current
+#       to access this information this program needs to parse the modes of each monitor
+#       from xrandr
+DRY_RUN=${DRY_RUN:-0}
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --dry-run)
+            DRY_RUN=1
+            shift # past argument
+            ;;
+        --help)
+            shift # past argument
+            cat >&2 <<-EOF
+			Usage: setup-monitor [options]
+			   options:
+			      --dry-run  Prints comands execute instead of running them
+			      --help     Prints this text
+			Example: xrandr -q | setup-monitor
+			
+			Parses 'xrandir -q' output via stdin, and sets the largest
+			connected monitor, and it turns off the rest of the monitors. 
+			It chooses the largest (pixelwise) mode, and sets dpi (via xrandr)
+			and font dpi ('Xft.dpi') via xrdb.  Dependencies: bash, xrandr,
+			xrdb (optional: if not available X's font dpi is not updated).
+			EOF
+            exit 0
+            ;;
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1") # save positional arg
+            shift # past argument
+            ;;
+    esac
+done
+# Checks standard input
+if [ -t 0 ]; then
+    >&2 echo "No input found"
+    echo "Try 'setup-monitor' --help for more information."
+    exit 1
+fi
+# Print commands (with echo) if DRY_RUN is set otherwise execute commands with 'sh -c'
+sh_c="sh -c"
+if [ "$DRY_RUN" -ne 0 ]; then
+    sh_c="echo"
+fi
+
+REGEX=`                                    # number in parentheses is the group id
+`"(^[A-Z]+-.*[0-9]+)"`                     # MONITOR_ID (1)
+`" connected (primary)? ?"`                # match only connected monitors
+`"([0-9]+)x([0-9]+)\\+([0-9]+)\\+([0-9])"` # WIDTH_PX (3) HEIGHT_PX (4) X_OFFSET (5) Y_OFFSET (6)
+`".*"`                                     # ignores rotations, xyz
+`" ([0-9]+)mm x ([0-9]+)mm"`               # WIDTH_MM (7) HEIGHT_MM (8)
+`".*"                                      # ignore the rest
+# Monitors are stored in arrays
+# example: ("HDMI-0" "3840" "2160" "0" "0" "698" "393")
+MONITOR_ID=0    # monitor Id as provided by xrandr
+WIDTH_PX=1      # monitor screen width in pixels
+HEIGHT_PX=2     # monitor screen height in pixels
+X_OFFSET=5      # x offset -- see xrandr documentation
+Y_OFFSET=6      # y offset
+WIDTH_MM=7      # monitor screen physical width in milimiters (mm)
+HEIGHT_MM=8     # monitor screen physical height in milimiters (mm)
+declare -a monitors=()
+readarray -t monitors <<< $(cat -- | sed -En "s/$REGEX/\1 \3 \4 \5 \6 \7 \8/gp")
+if [[ ${#monitors[@]} -eq 0 ] || [ -z ${monitors[@]} ]]; then
+    >&2 echo "No connected monitors found"
+    exit 1
+fi
+echo "${monitors[0]}"
+# Given an array of monitor strings (see string format above), returns the one with most pixelsnamed
+function findLargestMonitor() {
+    local monitors=$1
+    if [ ${#monitors[@]} -eq 0 ]; then
+        echo ""
+    elif [ ${#monitors[@]} -eq 1 ]; then
+        echo "${monitors[0]}"
+    else
+        declare -a selectedMonArr, monArr
+        declare -i monArea, selectedMonArea
+        readarray -d " " -t selectedMonArr <<< "${monitors[0]}"
+        for monStr in "${monitors[@:1]}"; do
+            readarray -d " " -t monArr <<< "$monStr"
+            monArea = $(( monArr[$WIDTH_PX] * monArr[$HEIGHT_PX] ))
+            selectedMonArea = $(( selectedMonArr[$WIDTH_PX] * selectedMonArr[$HEIGHT_PX] ))
+            if (( monArea > selectedMonArea )); then
+                selectedMonArr=$monArr
+            fi
+        done
+        echo "${selectedMonArr[@]}"
+    fi
+}
+declare -a mon=()
+readarray -d " " -t mon <<< $(findLargestMonitor "${monitors[@]}")
+
+# Choose a dpi based on screen resolution
+# todo: compute dpi using screen physical dimensions
+declare dpi
+case "${mon[$WIDTH_PX]}x${mon[$HEIGHT_PX]}" in
+    "1920x1080")
+    dpi="96" ;;
+    "3840x2160")
+    dpi="144" ;;
+    *)
+    dpi="96" ;;
+esac
+
+# Enable selected monitor
+$sh_c "xrandr --output ${mon[$MONITOR_ID]} --mode ${mon[$WIDTH_PX]}x${mon[$HEIGHT_PX]} --dpi $dpi" 
+
+command_exists() {
+    command -v "$@" > /dev/null 2>&1
+}
+# Set X's font dpi 
+if command_exists xrdb; then
+    tmpXresourceFile=$(mktemp "/tmp/dpi.XXXXXXXXX")
+    $sh_c "echo 'Xft.dpi: $dpi' > $tmpXresourceFile"
+    $sh_c "xrdb -quiet -load $tmpXresourceFile"  
+    rm -f $tmpXresourceFiles
+else
+    echo "WARNING: xrdb is not installed. Unabled to set 'Xft.dpi'"
+fi
+
+# Turn off connected monitors execpt for the selected one
+for monStr in "${monitors[@]}"; do
+    if [[ ! "$monStr" == *"${mon[$MONITOR_ID]}"* ]]; then
+        readarray -d " " -t offMon <<< "$monStr"
+        $sh_c "xrandr --outupt ${offMon[$MONITOR_ID]} --off" 
+    fi
+done
+
+
+
+
+
