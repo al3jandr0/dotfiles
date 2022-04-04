@@ -50,7 +50,7 @@ if [ "$DRY_RUN" -ne 0 ]; then
 fi
 
 REGEX=`                                    # number in parentheses is the group id
-`"(^[A-Z]+-.*[0-9]+)"`                     # MONITOR_ID (1)
+`"(^[A-Za-z]+-.*[0-9]+)"`                  # MONITOR_ID (1)
 `" connected (primary)? ?"`                # match only connected monitors
 `"([0-9]+)x([0-9]+)\\+([0-9]+)\\+([0-9])"` # WIDTH_PX (3) HEIGHT_PX (4) X_OFFSET (5) Y_OFFSET (6)
 `".*"`                                     # ignores rotations, xyz
@@ -67,7 +67,7 @@ WIDTH_MM=7      # monitor screen physical width in milimiters (mm)
 HEIGHT_MM=8     # monitor screen physical height in milimiters (mm)
 declare -a monitors=()
 readarray -t monitors <<< $(cat -- | sed -En "s/$REGEX/\1 \3 \4 \5 \6 \7 \8/gp")
-if [[ ${#monitors[@]} -eq 0 ] || [ -z ${monitors[@]} ]]; then
+if [ ${#monitors[@]} -eq 0 ] || [ -z "${monitors[@]}" ]; then
     >&2 echo "No connected monitors found"
     exit 1
 fi
@@ -119,7 +119,7 @@ command_exists() {
 if command_exists xrdb; then
     tmpXresourceFile=$(mktemp "/tmp/dpi.XXXXXXXXX")
     $sh_c "echo 'Xft.dpi: $dpi' > $tmpXresourceFile"
-    $sh_c "xrdb -quiet -load $tmpXresourceFile"  
+    $sh_c "xrdb -override $tmpXresourceFile"  
     rm -f $tmpXresourceFiles
 else
     echo "WARNING: xrdb is not installed. Unabled to set 'Xft.dpi'"

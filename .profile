@@ -6,15 +6,10 @@
 
 # the default umask is set in /etc/profile; for setting the umask
 # for ssh logins, install and configure the libpam-umask package.
-#umask 022
-
 # configures monitor (screen) sets resolution (mode) and dpi
-if [ -n "$BASH_VERSION" && command -v xrandr > /dev/null 2>&1 ]; then
-    xrandr --q12 | bash .local/bin/setup-monitor
-elif [ which xrandr > /dev/null 2>&1 ]; then
+if which xrandr > /dev/null; then
     xrandr --q12 | bash .local/bin/setup-monitor
 fi
-
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
