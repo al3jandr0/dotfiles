@@ -178,26 +178,10 @@ fi
 
 * https://www.thinkwiki.org/wiki/Xorg_RandR_1.2  Xrandr wiki page. It contains sample commands
 * https://linuxreviews.org/HOWTO_set_DPI_in_Xorg  A helpful guide how to set dpi in xorg
-* https://gitlab.freedesktop.org/xorg/app/xrandr Xrandr's source code.  It is the only place I found out the definitions of xrandr query output.
-
-Three or more...
+* https://gitlab.freedesktop.org/xorg/app/xrandr  Xrandr's source code.  It is the only place I found out the definitions of xrandr query output.
 
 ---
 
-Hyphens
-
-***
-
-Asterisks
-
-___
-
-Underscores
-
-
-
-
-asdasdd
 
 
 
