@@ -1,0 +1,8 @@
+#!/bin/sh
+if ! package_installed postgresql; then
+    $sush_c "echo 'deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main' | tee /etc/apt/sources.list.d/pgdg.list"
+    $sush_c "wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -"
+fi
+$sush_c "apt -y update"
+$sush_c "apt -y install postgresql"
+
