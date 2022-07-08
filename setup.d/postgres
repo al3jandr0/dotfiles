@@ -6,3 +6,14 @@ fi
 $sush_c "apt -y update"
 $sush_c "apt -y install postgresql"
 
+# for ease of login to postgres db:
+# https://stackoverflow.com/questions/32002846/run-psql-and-pg-dump-without-password-and-without-using-sudo-u-postgres
+# https://stackoverflow.com/questions/12720967/how-to-change-postgresql-user-password
+
+# package not available
+#$sush_c "apt install pgcli"
+# installing pgcli with pip
+
+# dependecy
+$sush_c "apt isntall libpq-dev"
+$sh_c "pip install pgcli"
