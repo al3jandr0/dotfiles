@@ -22,3 +22,11 @@ fi
 if [ -d "$HOME/.local/bin" ] && [[ $PATH != *"$HOME/.local/bin"* ]]; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+
+if [ -d "$HOME/.local/share/JetBrains/Toolbox/scripts" ] && [[ $PATH != *"$HOME/.local/share/JetBrains/Toolbox/scripts"* ]]; then
+    PATH="$HOME/.local/share/JetBrains/Toolbox/scripts:$PATH"
+fi
+# set PATH so it includes nvm directory if it exists
+#if [ -d "$HOME/.nvm" ] && [[ $PATH != *"$HOME/.nvm"* ]]; then
+#    PATH="$HOME/.nvm:$PATH"
+#fi

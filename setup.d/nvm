@@ -1,0 +1,8 @@
+#!/bin/sh
+# TODO: figure out how not to hardcode the version number
+# cehck nvm version
+if ! command_exists nvm; then
+    $sh_c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash"
+    $sh_c "bash $HOME/.nvm/nvm.sh"
+fi
+$sh_c "nvm install node"
