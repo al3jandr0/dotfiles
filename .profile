@@ -10,6 +10,13 @@
 if which xrandr > /dev/null; then
     xrandr --q12 | bash .local/bin/setup-monitor
 fi
+
+# TODO: look into creating a ~/.xinitrc file
+# Increments key repetition rate
+# 200 - milisecond delay before repeating starts
+# 50  - rate of repetition
+xset r rate 200 50
+
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
