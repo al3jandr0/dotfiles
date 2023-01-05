@@ -15,7 +15,7 @@ fi
 # Increments key repetition rate
 # 200 - milisecond delay before repeating starts
 # 50  - rate of repetition
-xset r rate 200 50
+xset r rate 200 45 
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
