@@ -1,0 +1,8 @@
+#!/bin/sh
+#### Docker-compose
+if ! command_exists docker-compose; then
+    DOCKER_COMPOSE_VERSION="1.29.2"
+    $sh_c "curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m) -o $HOME/.local/bin/docker-compose"
+    $sh_c "chmod 755 $HOME/.local/bin/docker-compose"
+    $sh_c "curl -L https://raw.githubusercontent.com/docker/compose/$DOCKER_COMPOSE_VERSION/contrib/completion/bash/docker-compose -o $HOME/.local/share/bash-completion/completions/docker-compose"
+fi

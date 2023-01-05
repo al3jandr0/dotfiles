@@ -1,0 +1,10 @@
+#!/bin/sh
+#### virtualbox
+if ! package_installed virtualbox; then
+    $sush_c "curl -sS https://www.virtualbox.org/download/oracle_vbox.asc | apt-key add -"
+    $sush_c "curl -sS https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -"
+    $sush_c "add-apt-repository deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+    $sush_c "'deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib' > /etc/apt/sources.list.d/virtualbox.list"
+    $sush_c "apt update"
+fi
+$sush_c "apt -y install virtualbox-6.1"

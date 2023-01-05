@@ -1,0 +1,10 @@
+#!/bin/sh
+#### non esr firefox
+if ! file_exists "/opt/firefox/firefox"; then
+    $sh_c "wget 'https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US' -O ${PKG_DIR}firefox"
+    $sush_c "tar -xjf ${PKG_DIR}firefox -C /opt/"
+    $sush_c "chmod 755 ${PKG_DIR}firefox /opt/firefox"
+    $sush_c "chmod 755 ${PKG_DIR}firefox /opt/firefox/firefox"
+    $sush_c "ln -sf /opt/firefox/firefox /usr/local/bin/firefox"
+    $sush_c "update-alternatives --install /usr/bin/x-www-browser x-www-browser /opt/firefox/firefox 200 && sudo update-alternatives --set x-www-browser /opt/firefox/firefox"
+fi

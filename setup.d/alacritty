@@ -1,0 +1,34 @@
+#!/bin/sh
+#### Alacritty
+# Install rust compiler
+RUST_BIN_DIR="$HOME/.cargo/bin/"
+if ! command_exists restup; then # or rustup bin dir doesnt exists
+    $sh_c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path -y --profile minimal"
+fi
+$sh_c "${RUST_BIN_DIR}rustup override set stable"
+$sh_c "${RUST_BIN_DIR}rustup update stable"
+
+# install deps
+$sush_c "apt -y install cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3"
+
+# TODO: allow for updating alacritty
+ALACRITTY_DIR="${FOREING_TOOL_REPO_DIR}alacritty/"
+if [ ! -d "$ALACRITTY_DIR" ]; then
+    $sh_c "git clone https://github.com/alacritty/alacritty.git $ALACRITTY_DIR"
+    #cd $ALACRITTY_DIR  #todo: try building from outside the alacrity repo
+    $sh_c "${RUST_BIN_DIR}cargo build --release --manifest-path=${ALACRITTY_DIR}Cargo.toml"
+
+    $sush_c "cp ${ALACRITTY_DIR}target/release/alacritty /usr/bin"
+    $sush_c "cp ${ALACRITTY_DIR}extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg"
+    $sush_c "desktop-file-install ${ALACRITTY_DIR}extra/linux/Alacritty.desktop"
+    $sush_c "update-desktop-database"
+    # man page
+    $sush_c "mkdir -p /usr/local/share/man/man1"
+    $sush_c "gzip -c extra/alacritty.man | sudo tee /usr/local/share/man/man1/alacritty.1.gz > /dev/null"
+fi
+
+# todo: add to dotfiles repo
+# TODO: add autocomplete  https://github.com/alacritty/alacritty/blob/master/INSTALL.md#install-the-rust-compiler-with-rustup
+# mkdir -p ~/.bash_completion
+# cp extra/completions/alacritty.bash ~/.bash_completion/alacritty
+# echo "source ~/.bash_completion/alacritty" >> ~/.bashrc

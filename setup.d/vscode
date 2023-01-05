@@ -1,0 +1,6 @@
+#!/bin/sh
+#### Vscode
+if ! package_installed code; then
+    $sh_c "wget 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' -O ${PKG_DIR}vscode.deb"
+    $sush_c "apt -y install ${PKG_DIR}vscode.deb"
+fi

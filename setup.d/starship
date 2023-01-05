@@ -1,0 +1,5 @@
+#!/bin/sh
+#### Starship
+# Fetch and install the latest version of starship, if starship is already
+# installed it will be updated to the latest version.
+$sush_c  "curl -fsSL https://starship.rs/install.sh | sudo sh -s -- -y"

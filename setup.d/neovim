@@ -1,0 +1,13 @@
+#!/bin/sh
+$sh_c "wget https://github.com/neovim/neovim/releases/download/stable/nvim.appimage -O ${PKG_DIR}nvim"
+$sh_c "install -D -t $HOME/.local/bin/ -m 755 ${$PKG_DIR}nvim"
+
+# TODO: test withouth 'nodejs' and 'npm' dependencies
+$sush_c "apt -y install nodejs npm python3"
+#### yarn
+if ! package_installed yarn; then
+    $sush_c "curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -"
+    $sush_c "echo 'deb https://dl.yarnpkg.com/debian/ stable main' | tee /etc/apt/sources.list.d/yarn.list"
+fi
+$sush_c "apt -y update"
+$sush_c "apt -y install yarn"

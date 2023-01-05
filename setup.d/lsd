@@ -1,0 +1,8 @@
+#!/bin/sh
+#### LSD: download from release page
+# curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/Peltoche/lsd/releases/latest
+## in case you'd like to programatically download the latest version
+if ! package_installed lsd; then
+    $sh_c "wget https://github.com/Peltoche/lsd/releases/download/0.20.1/lsd_0.20.1_amd64.deb -O ${PKG_DIR}lsd.deb"
+fi
+$sush_c "apt -y install ${PKG_DIR}lsd.deb"

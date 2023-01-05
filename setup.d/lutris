@@ -1,0 +1,18 @@
+#!/bin/sh
+#### Lutris - games on linux
+if ! package_isntalled lutris; then
+    #TODO: it is better to grab the latest release version form their github repo.  Figure out how to do that programatically
+
+    #todo: DEbian_11 ?
+    $sush_c "echo 'deb http://download.opensuse.org/repositories/home:/strycore/Debian_10/ ./' | tee /etc/apt/sources.list.d/lutris.list"
+    $sush_c "curl -sS https://download.opensuse.org/repositories/home:/strycore/Debian_10/Release.key | apt-key add -"
+    # Instructions missing
+    $sush_c "dpkg --add-architecture i386"
+    # if Nvidia
+    # these need update.  It is better to download the driver from nvidia directly
+    #$sush_c "add-apt-repository ppa:graphics-drivers/ppa"
+    # if intel or AMD
+    #$sush_c "add-apt-repository ppa:kisak/kisak-mesa"
+fi
+$sush_c "apt -y update"
+$sush_c "apt -y install libfreetype6:i386 wine64 wine32 lutris"

@@ -1,0 +1,17 @@
+#!/bin/sh
+# Install cabal
+#if ! command_exists cabal; then
+if ! file_exists "opt/cabal"; then
+    $sh_c "curl -sS 'https://downloads.haskell.org/~cabal/cabal-install-3.6.0.0/cabal-install-3.6.0.0-x86_64-linux.tar.xz' | tar -xJ -C $PKG_DIR"
+    $sush_c "mv ${PKG_DIR}cabal /opt/"
+    $sush_c "ln -sf /opt/cabal /usr/local/bin/cabal"
+fi
+# xmobar deps
+if ! file_exists "$HOME/.cabal/bin/xmobar"; then
+    $sush_c "apt -y install libghc-alsa-core-dev libxpm-dev"
+    #customize the extensions to remove those not needed :S
+    $sh_c "cabal update"
+    $sh_c "cabal install xmobar --flags='all_extensions'"
+fi
+$sush_c "lb -sf $HOME/.cabal/bin/xmobar /usr/local/bin/xmobar"
+

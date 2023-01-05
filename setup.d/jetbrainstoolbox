@@ -1,0 +1,12 @@
+#!/bin/sh
+#### jetbrains toolbox app
+#todo: figure out how to get the latest stable version
+if ! file_exists "/usr/local/bin/jetbrains-toolbox"; then
+    $sh_c "curl -sS 'https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-1.21.9712.tar.gz' -o ${PKG_DIR}jetbrains-toolbox.tar.gz"
+    $sh_c "tar -xzf ${PKG_DIR}jetbrains-toolbox.tar.gz -C ${PKG_DIR}"
+    $sh_c "rm ${PKG_DIR}jetbrains-toolbox.tar.gz"
+    $sush_c "mv ${PKG_DIR}jetbrains-toolbox-* /opt/jetbrains-toolbox"
+    $sush_c "chmod 755 /opt/jetbrains-toolbox"
+    $sush_c "chmod 755 /opt/jetbrains-toolbox/jetbrains-toolbox"
+    $sush_c "ln -sf /opt/jetbrains-toolbox/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox"
+fi
