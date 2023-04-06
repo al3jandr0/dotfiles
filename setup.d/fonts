@@ -2,10 +2,11 @@
 ### Fonts
 NERD_FONTS_DIR="${FOREING_TOOL_REPO_DIR}nerd-fonts/"
 FONTS="Mononoki"
+
 if [ ! -d "$NERD_FONTS_DIR" ]; then
-    $sush_c "git clone https://github.com/ryanoasis/nerd-fonts.git $NERD_FONTS_DIR"
+	$sush_c "git clone https://github.com/ryanoasis/nerd-fonts.git $NERD_FONTS_DIR"
 else
-    $sush_c "git -C $NERD_FONTS_DIR pull"
+	$sush_c "git -C $NERD_FONTS_DIR pull"
 fi
 
-$sush_c "${NERD_FONTS_DIR}install.sh $FONTS"
+#$sush_c "${NERD_FONTS_DIR}install.sh $FONTS"

@@ -7,9 +7,9 @@
 # the default umask is set in /etc/profile; for setting the umask
 # for ssh logins, install and configure the libpam-umask package.
 # configures monitor (screen) sets resolution (mode) and dpi
-if which xrandr > /dev/null; then
-    xrandr --q12 | bash .local/bin/setup-monitor
-fi
+#if which xrandr > /dev/null; then
+#    xrandr --q12 | bash .local/bin/setup-monitor
+#fi
 
 # TODO: look into creating a ~/.xinitrc file
 # Increments key repetition rate
