@@ -1,6 +1,0 @@
-{
-// python config
-  //"python.linting.enabled": true,
-  //"python.linting.pylintEnabled": true,
-  "coc.preferences.extensionUpdateCheck": "daily"
-}
