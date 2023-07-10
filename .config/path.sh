@@ -26,6 +26,12 @@ fi
 if [ -d "$HOME/.local/share/JetBrains/Toolbox/scripts" ] && [[ $PATH != *"$HOME/.local/share/JetBrains/Toolbox/scripts"* ]]; then
     PATH="$HOME/.local/share/JetBrains/Toolbox/scripts:$PATH"
 fi
+
+# set PATH so it includes jdk version
+if [ -d "$JAVA_HOME" ] && [[ $PATH != *"$JAVA_HOME"/* ]]; then
+    PATH="$JAVA_HOME/bin:$PATH"
+fi
+
 # set PATH so it includes nvm directory if it exists
 #if [ -d "$HOME/.nvm" ] && [[ $PATH != *"$HOME/.nvm"* ]]; then
 #    PATH="$HOME/.nvm:$PATH"
