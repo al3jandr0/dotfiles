@@ -32,6 +32,11 @@ if [ -d "$JAVA_HOME" ] && [[ $PATH != *"$JAVA_HOME"/* ]]; then
     PATH="$JAVA_HOME/bin:$PATH"
 fi
 
+# set PATH so it includes jdk version
+if [ -d "$MAVEN_HOME" ] && [[ $PATH != *"$MAVEN_HOME"/* ]]; then
+    PATH="$MAVEN_HOME/bin:$PATH"
+fi
+
 # set PATH so it includes nvm directory if it exists
 #if [ -d "$HOME/.nvm" ] && [[ $PATH != *"$HOME/.nvm"* ]]; then
 #    PATH="$HOME/.nvm:$PATH"

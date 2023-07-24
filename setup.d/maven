@@ -1,0 +1,7 @@
+#!/bin/sh
+# https://maven.apache.org/download.cgi
+# Maven
+
+$sush_c "mkdir -p /opt/maven"
+wget https://dlcdn.apache.org/maven/maven-3/3.9.3/binaries/apache-maven-3.9.3-bin.tar.gz -O ${PKG_DIR}apache-maven-3.9.3-bin.tar.gz
+$sush_c "tar xvf ${PKG_DIR}apache-maven-3.9.3-bin.tar.gz --directory /opt/maven/"

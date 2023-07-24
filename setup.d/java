@@ -6,5 +6,6 @@ wget https://download.java.net/java/GA/jdk20.0.1/b4887098932d415489976708ad6d1a4
 $sush_c "tar xvf ${PKG_DIR}jdk-20*.tar.gz --directory /opt/jdk/"
 
 # TODO:
-# install maven
-# Scala
+# 2. install java language server
+# 3. What esle do I need to run build and run the test in Expero project
+# 4. install Scala
