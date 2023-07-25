@@ -28,13 +28,18 @@ if [ -d "$HOME/.local/share/JetBrains/Toolbox/scripts" ] && [[ $PATH != *"$HOME/
 fi
 
 # set PATH so it includes jdk version
-if [ -d "$JAVA_HOME" ] && [[ $PATH != *"$JAVA_HOME"/* ]]; then
+if [ -d "$JAVA_HOME" ] && [[ $PATH != *"$JAVA_HOME"* ]]; then
     PATH="$JAVA_HOME/bin:$PATH"
 fi
 
 # set PATH so it includes jdk version
-if [ -d "$MAVEN_HOME" ] && [[ $PATH != *"$MAVEN_HOME"/* ]]; then
+if [ -d "$MAVEN_HOME" ] && [[ $PATH != *"$MAVEN_HOME"* ]]; then
     PATH="$MAVEN_HOME/bin:$PATH"
+fi
+
+# coursier directory of Scala tools
+if [ -d "$HOME/.local/share/coursier/bin" ] && [[ $PATH != *"coursier/bin"* ]]; then
+    PATH="$HOME/.local/share/coursier/bin:$PATH"
 fi
 
 # set PATH so it includes nvm directory if it exists
