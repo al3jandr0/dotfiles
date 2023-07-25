@@ -21,6 +21,7 @@ return {
       "rasi",
       "rust",
       "toml",
+      "java",
     })
   end,
   dependencies = {
