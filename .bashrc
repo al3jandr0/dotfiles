@@ -89,6 +89,8 @@ eval "$(starship init bash)"
 # direnv - auto load and unload local env vars
 eval "$(direnv hook bash)"
 
+# eval "$(pyenv init - bash)"
+
 # This is node stuff :/
 # TODO: idk what to do abou this. remove if not needed
 export NVM_DIR="$HOME/.nvm"
