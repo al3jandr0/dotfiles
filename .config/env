@@ -1,0 +1,20 @@
+# Documentation https://wiki.archlinux.org/title/XDG_Base_Directory
+
+export EDITOR=nvim
+
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_STATE_HOME=$HOME/.local/state
+
+# Java
+export JAVA_HOME="/opt/jdk/jdk-20.0.1"
+export MAVEN_HOME="/opt/maven/apache-maven-3.9.3"
+export MAVEN_OPTS=-Dmaven.repo.local="$XDG_DATA_HOME"/maven/repository
+export MAVEN_ARGS="--settings $XDG_CONFIG_HOME/maven/settings.xml"
+# mvn -gs "$XDG_CONFIG_HOME"/maven/settings.xml
+
+export SDKMAN_DIR="$XDG_DATA_HOME/sdkman"
+
+# Python
+export PYENV_ROOT=$XDG_DATA_HOME/pyenv
