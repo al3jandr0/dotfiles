@@ -4,3 +4,4 @@
 [submodule "nvim"]
 	path = .config/nvim
 	url = git@github.com:al3jandr0/lazy.nvim.git
+	branch = stable
