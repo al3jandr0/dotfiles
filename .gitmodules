@@ -1,3 +1,6 @@
 [submodule ".config/alacritty/catppuccin"]
 	path = .config/alacritty/catppuccin
 	url = https://github.com/catppuccin/alacritty.git
+[submodule ".config/starter"]
+	path = .config/starter
+	url = git@github.com:LazyVim/starter.git

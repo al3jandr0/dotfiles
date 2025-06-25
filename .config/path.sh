@@ -48,3 +48,8 @@ fi
 if [ -d "$XDG_DATA_HOME/pyenv/bin" ]; then
     PATH="$XDG_DATA_HOME/pyenv/bin:$PATH"
 fi
+
+# set PATH to include pyenv binaries
+if [ -d "$XDG_DATA_HOME/cosmocc/bin" ]; then
+    PATH="$XDG_DATA_HOME/cosmocc/bin:$PATH"
+fi

@@ -1,1 +1,1 @@
-$sush_c "apt -y install sudo bash git vim curl wget ssh suckless-tools brightnessctl brightness-udev autorandr"
+$sush_c "apt -y install sudo bash git vim curl wget ssh suckless-tools brightnessctl brightness-udev autorandr fd-find ripgrep"
