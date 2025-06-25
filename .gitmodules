@@ -3,4 +3,4 @@
 	url = https://github.com/catppuccin/alacritty.git
 [submodule "nvim"]
 	path = .config/nvim
-	url = git@github.com:LazyVim/starter.git
+	url = git@github.com:al3jandr0/lazy.nvim.git
