@@ -15,3 +15,5 @@
 [user]
 	name = alej
 	email = nerdalej@gmail.com
+[diff]
+	submodule = log
