@@ -5,3 +5,4 @@
 	path = .config/nvim
 	url = git@github.com:al3jandr0/starter.git
 	branch = stable
+	update = rebase
