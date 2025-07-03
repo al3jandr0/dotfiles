@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-
 ###################################################################################################
 ##  XDG.                                                                     ##
 ##---------------------------------------------------------------------------##
@@ -14,189 +13,181 @@ XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 XDG_BIN_HOME=${XDG_BIN_HOME:-$HOME/.local/bin}
 
-# TODO:migrate to 
+# TODO:migrate to
 FOREING_TOOL_REPO_DIR="$XDG_CACHE_HOME/foreing-tool-repos"
 FOREING_INSTALL_SCRIPTS_DIR="$XDG_CACHE_HOME/install-scripts"
 PKG_DIR="$HOME/installation-packages/"
 
 command_exists() {
-    command -v "$@" > /dev/null 2>&1
+  command -v "$@" >/dev/null 2>&1
 }
 
 package_installed() {
-    dpkg -s "$@" > /dev/null 2>&1
+  dpkg -s "$@" >/dev/null 2>&1
 }
 
 file_exists() {
-    test -f "$@" > /dev/null 2>&1 
+  test -f "$@" >/dev/null 2>&1
 }
 
 dir_exists() {
-    test -d "$@" > /dev/null 2>&1 
+  test -d "$@" >/dev/null 2>&1
 }
 
 user=$(id -un 2>/dev/null || true)
-sush="sh" # super user shell command
-sh_c="sh -c"  # user shell command
+sush="sh"    # super user shell command
+sh_c="sh -c" # user shell command
 if [ "$user" != 'root' ]; then
-    if command_exists sudo; then
-        sush='sudo sh'
-    elif command_exists su; then
-        sush='su'
-    else
-        echo "Error: this installer needs the ability to run commands as root." >&2
-        echo "Unable to find either "sudo" or "su" available to make this happen." >&2
-        #cat >&2 <<-EOF
-        #Error: this installer needs the ability to run commands as root.
-        #Unable to find either "sudo" or "su" available to make this happen. 
-        #EOF
-        exit 1
-    fi
+  if command_exists sudo; then
+    sush='sudo sh'
+  elif command_exists su; then
+    sush='su'
+  else
+    echo "Error: this installer needs the ability to run commands as root." >&2
+    echo "Unable to find either "sudo" or "su" available to make this happen." >&2
+    #cat >&2 <<-EOF
+    #Error: this installer needs the ability to run commands as root.
+    #Unable to find either "sudo" or "su" available to make this happen.
+    #EOF
+    exit 1
+  fi
 fi
 sush_c="$sush -c"
 sush_s="$sush -s"
 
 if [ ! -d "$FOREING_TOOL_REPO_DIR" ]; then
-    $sh_c "mkdir $FOREING_TOOL_REPO_DIR"
+  $sh_c "mkdir $FOREING_TOOL_REPO_DIR"
 fi
 if [ ! -d "$PKG_DIR" ]; then
-    $sh_c "mkdir $PKG_DIR"
+  $sh_c "mkdir $PKG_DIR"
 fi
 
 # More recent version than what's available via ubuntu packages
 install_wayland_protocols() {
-	echo "INTALLING wayland protocols"
-	cd $FOREING_TOOL_REPO_DIR
-	# TODO: download release
-	cd "wayland-protocols-1.44"
-	mkdir -p build &&
-	cd    build &&
-	meson setup --prefix=/usr --buildtype=release &&
-	ninja
-	sudo ninja install
-	cd $HOME
+  echo "INTALLING wayland protocols"
+  cd $FOREING_TOOL_REPO_DIR
+  # TODO: download release
+  cd "wayland-protocols-1.44"
+  mkdir -p build &&
+    cd build &&
+    meson setup --prefix=/usr --buildtype=release &&
+    ninja
+  sudo ninja install
+  cd $HOME
 }
 
 install_hyprland_from_source() {
-	# dependencies from the wiki
-	sudo apt install -y  build-essential cmake cmake-extras ninja-build meson wget gettext gettext-base fontconfig libfontconfig-dev libffi-dev libxml2-dev libdrm-dev libxkbcommon-x11-dev libxkbregistry-dev libxkbcommon-dev libpixman-1-dev libudev-dev libseat-dev seatd libxcb-dri3-dev libegl-dev libgles2 libegl1-mesa-dev glslang-tools libinput-bin libinput-dev libxcb-composite0-dev libavutil-dev libavcodec-dev libavformat-dev libxcb-ewmh2 libxcb-ewmh-dev libxcb-present-dev libxcb-icccm4-dev libxcb-render-util0-dev libxcb-res0-dev libxcb-xinput-dev libtomlplusplus3 libre2-dev
+  # dependencies from the wiki
+  sudo apt install -y build-essential cmake cmake-extras ninja-build meson wget gettext gettext-base fontconfig libfontconfig-dev libffi-dev libxml2-dev libdrm-dev libxkbcommon-x11-dev libxkbregistry-dev libxkbcommon-dev libpixman-1-dev libudev-dev libseat-dev seatd libxcb-dri3-dev libegl-dev libgles2 libegl1-mesa-dev glslang-tools libinput-bin libinput-dev libxcb-composite0-dev libavutil-dev libavcodec-dev libavformat-dev libxcb-ewmh2 libxcb-ewmh-dev libxcb-present-dev libxcb-icccm4-dev libxcb-render-util0-dev libxcb-res0-dev libxcb-xinput-dev libtomlplusplus3 libre2-dev
 
-	# to try install other recommended packages that are not available in the distro. I will build from source anyways
-	# It didnt work. delete
-	#sudo apt install -y hyprland 
+  # to try install other recommended packages that are not available in the distro. I will build from source anyways
+  # It didnt work. delete
+  #sudo apt install -y hyprland
 
-	sudo apt install -y xdg-desktop-portal-hyprland
-	# undocumented deps
-	sudo apt install -y hyprwayland-scanner
-	# delete these
-	#sudo apt install -y libhyprlang-dev libhyprlang2
-	sudo apt install -y libhyprcursor-dev libhyprcursor0
-	# prolly dont need this?
-	sudo apt install -y librust-wayland-client-dev
-	sudo apt install -y hyprland-protocols
-	# wayland-protocols are too old to build dfrom source
-	#sudo apt install -y wayland-protocols
-	sudo apt install -y libgbm-dev
-	sudo apt install -y libdisplay-info-dev
-	sudo apt install -y libpango1.0-dev libxcursor-dev
-	sudo apt install -y libxcb-errors-dev
-	sudo apt install -y libtomlplusplus-dev
+  sudo apt install -y xdg-desktop-portal-hyprland
+  # undocumented deps
+  sudo apt install -y hyprwayland-scanner
+  # delete these
+  #sudo apt install -y libhyprlang-dev libhyprlang2
+  sudo apt install -y libhyprcursor-dev libhyprcursor0
+  # prolly dont need this?
+  sudo apt install -y librust-wayland-client-dev
+  sudo apt install -y hyprland-protocols
+  # wayland-protocols are too old to build dfrom source
+  #sudo apt install -y wayland-protocols
+  sudo apt install -y libgbm-dev
+  sudo apt install -y libdisplay-info-dev
+  sudo apt install -y libpango1.0-dev libxcursor-dev
+  sudo apt install -y libxcb-errors-dev
+  sudo apt install -y libtomlplusplus-dev
 
-	echo "INTALLING hyprutils"
-	cd $FOREING_TOOL_REPO_DIR
-	if ! dir_exists hyprutils; then
-		git clone --recursive https://github.com/hyprwm/hyprutils
-	fi
-	cd hyprutils
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
-	cmake --build ./build --config Release --target all -j`nproc 2>/dev/null || getconf NPROCESSORS_CONF`
-	sudo cmake --install build
-	cd $HOME
+  echo "INTALLING hyprutils"
+  cd $FOREING_TOOL_REPO_DIR
+  if ! dir_exists hyprutils; then
+    git clone --recursive https://github.com/hyprwm/hyprutils
+  fi
+  cd hyprutils
+  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
+  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf NPROCESSORS_CONF)
+  sudo cmake --install build
+  cd $HOME
 
+  echo "INTALLING aquamarine"
+  cd $FOREING_TOOL_REPO_DIR
+  if ! dir_exists aquamarine; then
+    git clone --recursive https://github.com/hyprwm/aquamarine
+  fi
+  cd aquamarine
+  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
+  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)
+  sudo cmake --install build
+  cd $HOME
 
-	echo "INTALLING aquamarine"
-	cd $FOREING_TOOL_REPO_DIR
-	if ! dir_exists aquamarine; then
-		git clone --recursive https://github.com/hyprwm/aquamarine
-	fi
-	cd aquamarine
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
-	cmake --build ./build --config Release --target all -j`nproc 2>/dev/null || getconf _NPROCESSORS_CONF`
-	sudo cmake --install build
-	cd $HOME
+  echo "INTALLING hyprgraphics"
+  cd $FOREING_TOOL_REPO_DIR
+  if ! dir_exists hyprgraphics; then
+    git clone --recursive https://github.com/hyprwm/hyprgraphics
+  fi
+  cd hyprgraphics
+  sudo apt install -y libcairo2-dev libxt-dev libjpeg-dev libwebp-dev libjpeg-dev libmagic-dev libspng-dev
+  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
+  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf NPROCESSORS_CONF)
+  sudo cmake --install build
+  cd $HOME
 
-	echo "INTALLING hyprgraphics"
-	cd $FOREING_TOOL_REPO_DIR
-	if ! dir_exists hyprgraphics; then
-		git clone --recursive https://github.com/hyprwm/hyprgraphics
-	fi
-	cd hyprgraphics
-	sudo apt install -y libcairo2-dev libxt-dev libjpeg-dev libwebp-dev libjpeg-dev libmagic-dev libspng-dev
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
-	cmake --build ./build --config Release --target all -j`nproc 2>/dev/null || getconf NPROCESSORS_CONF`
-	sudo cmake --install build
-	cd $HOME
+  # hyperlang
+  echo "INTALLING hyprlang"
+  cd $FOREING_TOOL_REPO_DIR
+  if ! dir_exists hyprlang; then
+    git clone --recursive https://github.com/hyprwm/hyprlang
+  fi
+  cd hyprlang
+  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
+  cmake --build ./build --config Release --target hyprlang -j$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)
+  sudo cmake --install ./build
+  cd $HOME
 
-	# hyperlang
-	echo "INTALLING hyprlang"
-	cd $FOREING_TOOL_REPO_DIR
-	if ! dir_exists hyprlang; then
-		git clone --recursive https://github.com/hyprwm/hyprlang
-	fi
-	cd hyprlang
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
-	cmake --build ./build --config Release --target hyprlang -j`nproc 2>/dev/null || getconf _NPROCESSORS_CONF`
-	sudo cmake --install ./build
-	cd $HOME
+  # hyprland runtime dependency
+  sudo apt install -y qt6-wayland-dev qt6-wayland-private-dev
+  sudo apt install -y libqt6qml6 libqt6quick6
+  sudo apt install -y qt6-base-dev qt6-declarative-dev qt6-declarative-private-dev
+  sudo apt install -y qml6-module-*
+  sudo apt install -y libqt6waylandclient6 qml6-module-qtwayland-client-texturesharing libkwaylandclient6 qml6-module-qtwayland-compositor
 
+  echo "INTALLING hyprland qt support"
+  cd $FOREING_TOOL_REPO_DIR
+  if ! dir_exists hyprland-qt-support; then
+    git clone --recursive https://github.com/hyprwm/hyprland-qt-support
+  fi
+  cd hyprland-qt-support
+  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -DINSTALL_QML_PREFIX=/lib/qt6/qml -S . -B ./build
+  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf NPROCESSORS_CONF)
+  sudo cmake --install build
+  cd $HOME
 
-	# hyprland runtime dependency
-	sudo apt install -y qt6-wayland-dev qt6-wayland-private-dev
-	sudo apt install -y libqt6qml6 libqt6quick6
-	sudo apt install -y qt6-base-dev qt6-declarative-dev qt6-declarative-private-dev
-	sudo apt install -y qml6-module-*
-	sudo apt install -y libqt6waylandclient6 qml6-module-qtwayland-client-texturesharing libkwaylandclient6 qml6-module-qtwayland-compositor
+  echo "INTALLING hyprland qt utils"
+  cd $FOREING_TOOL_REPO_DIR
+  if ! dir_exists hyprland-qtutils; then
+    git clone --recursive https://github.com/hyprwm/hyprland-qtutils
+  fi
+  cd hyprland-qtutils
+  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -DINSTALL_QML_PREFIX=/lib/qt6/qml -DQT_DEBUG_FIND_PACKAGE=ON -S . -B ./build
+  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf NPROCESSORS_CONF)
+  sudo cmake --install build
+  cd $HOME
 
-
-	echo "INTALLING hyprland qt support"
-	cd $FOREING_TOOL_REPO_DIR
-	if ! dir_exists hyprland-qt-support; then
-		git clone --recursive https://github.com/hyprwm/hyprland-qt-support
-	fi
-	cd hyprland-qt-support
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -DINSTALL_QML_PREFIX=/lib/qt6/qml -S . -B ./build
-	cmake --build ./build --config Release --target all -j`nproc 2>/dev/null || getconf NPROCESSORS_CONF`
-	sudo cmake --install build
-	cd $HOME
-
-
-
-	echo "INTALLING hyprland qt utils"
-	cd $FOREING_TOOL_REPO_DIR
-	if ! dir_exists hyprland-qtutils; then
-		git clone --recursive https://github.com/hyprwm/hyprland-qtutils
-	fi
-	cd hyprland-qtutils
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -DINSTALL_QML_PREFIX=/lib/qt6/qml -DQT_DEBUG_FIND_PACKAGE=ON -S . -B ./build
-	cmake --build ./build --config Release --target all -j`nproc 2>/dev/null || getconf NPROCESSORS_CONF`
-	sudo cmake --install build
-	cd $HOME
-
-	# Hyprland
-	#if ! command_exists hyprland; then
-		cd $FOREING_TOOL_REPO_DIR
-		if ! dir_exists Hyprland; then
-			git clone --recursive https://github.com/hyprwm/Hyprland
-		fi
-		cd Hyprland
-		make all && sudo make install
-		cd $HOME
-	#fi
-	sudo apt install -y nvidia-utils libnvidia-egl-wayland1 
+  # Hyprland
+  #if ! command_exists hyprland; then
+  cd $FOREING_TOOL_REPO_DIR
+  if ! dir_exists Hyprland; then
+    git clone --recursive https://github.com/hyprwm/Hyprland
+  fi
+  cd Hyprland
+  make all && sudo make install
+  cd $HOME
+  #fi
+  sudo apt install -y nvidia-utils libnvidia-egl-wayland1
 }
-
-
-
 
 ##########################
 # TODO:
@@ -207,10 +198,10 @@ install_hyprland_from_source() {
 # - [x] Install McFly
 # - [x] Install waybar
 #
-# - [ ] Install optional prgrams: 
-# - [x] 1. python(s). 
-# - [x] 2. nvm/node/npm. 
-# - [x] 3. sdkman. (no java yet). 
+# - [ ] Install optional prgrams:
+# - [x] 1. python(s).
+# - [x] 2. nvm/node/npm.
+# - [x] 3. sdkman. (no java yet).
 # - [x] 4. Docker
 # - [x] o. [dont install Lutris since it is only for FFXIV]
 # - [x] Asus laptop drivers. asys-linux.org has 2 repos one to control the descretegp, and another one for periferals such as fan curve and keyboard rgb leds. They require patching the linux kernerl and I dont want to get into that. Give it a shot to this project after 1) You got everything else sinstalled and 25.10 has come out.
@@ -228,6 +219,7 @@ install_hyprland_from_source() {
 #
 # TODO:
 # - [ ] NVIM. add mode and line and column numbers
+# - [ ] 4 spaces as tab. It defaults to 2
 #
 # DEBUG:
 # .vim in home directory. configure to save in XDG way
@@ -245,7 +237,7 @@ install_hyprland_from_source() {
 # Evevn more down the line
 # Install Postgresql, steam, discord
 #
-# Lastly, 
+# Lastly,
 # - [ ] Ensure everything is installed in accordance to XDG folders
 # - [ ] Test script is idempotent. Mayeb use VM for this?
 # - [ ] Test instructions are all clear
@@ -253,12 +245,8 @@ install_hyprland_from_source() {
 # Then create your own ppa for all the software you install manually
 #########################
 
-
-
-
 #sudo apt update
-#sudo apt upgrade 
-
+#sudo apt upgrade
 
 ###################################################################################################
 ##  ESSENTIALS.                                                                                  ##
@@ -268,21 +256,21 @@ install_hyprland_from_source() {
 ##  TODO. Add SSH agent. It should be default, nah?                                              ##
 ###################################################################################################
 sudo apt install -y \
-bash \
-git \
-vim \
-curl \
-ssh \
-alacritty \
-lsd \
-starship \
-direnv \
-jq \
-build-essential \
-make cmake cmake-extras \
-ninja-build \
-pulseaudio pavucontrol \
-network-manager
+  bash \
+  git \
+  vim \
+  curl \
+  ssh \
+  alacritty \
+  lsd \
+  starship \
+  direnv \
+  jq \
+  build-essential \
+  make cmake cmake-extras \
+  ninja-build \
+  pulseaudio pavucontrol \
+  network-manager
 ###################################################################################################
 ##  ESSENTIALS MANUAL INSTALLATOIN.                                                              ##
 ##-----------------------------------------------------------------------------------------------##
@@ -297,7 +285,7 @@ network-manager
 ##-----------------------------------------------------------------------------------------------##
 mkdir -p $XDG_DATA_HOME/fonts
 curl --output-dir $XDG_DATA_HOME/fonts -OL \
-https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.tar.xz
+  https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.tar.xz
 cd $XDG_DATA_HOME/fonts
 tar -xvf Mononoki.tar.xz
 rm -f Mononoki.tar.xz
@@ -307,18 +295,19 @@ cd
 ##  MCFLY.                                                                                       ##
 ##-----------------------------------------------------------------------------------------------##
 curl -L --output $FOREING_INSTALL_SCRIPTS_DIR/mcfly_install.sh \
-https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh
+  https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh
 bash $FOREING_INSTALL_SCRIPTS_DIR/mcfly_install.sh \
-	--git cantino/mcfly --to $XDG_BIN_HOME
+  --git cantino/mcfly --to $XDG_BIN_HOME
 cd
 ##-----------------------------------------------------------------------------------------------##
 ##  NEOVIM.                                                                                      ##
 ##  At the time of writing LazyVim requires a newer version of neovim that isn't available       ##
-##  in the distribution                                                                          ##
+##  in the distro's packages, and I decieded to install it via snap isntead of donwloading the   ##
+##  precompile archive becuase it requires a newer version og glibc than what's availble in      ##
+##  my Debian 11 laptop.                                                                         ##
 ##-----------------------------------------------------------------------------------------------##
-# TODO: Add Neovim installantion here
+sudo snap install nvim --classic
 exit 0
-
 
 ###################################################################################################
 ##  NVIDIA.                                                                                      ##
@@ -334,7 +323,6 @@ exit 0
 ###################################################################################################
 sudo ubuntu-drivers install nvidia:570
 
-
 ###############################################################################
 ##  WAYLAND.                                                                 ##
 ##---------------------------------------------------------------------------##
@@ -345,7 +333,6 @@ sudo ubuntu-drivers install nvidia:570
 ##  TODO. Fix to pull latest. As of now the version is hardcoded             ##
 ###############################################################################
 install_wayland_protocols
-
 
 ###############################################################################
 ##  HYPRLAND.                                                                ##
@@ -370,8 +357,7 @@ sudo apt install -y qt6-wayland-dev qt6-base-dev
 # hyprland dependencies
 sudo apt install -y xdg-desktop-portal-hyprland hyprwayland-scanner
 # hyperland & hypr tools
-sudo apt install -y hyprland hyprlock waybar hyprpaper pipewire 
-
+sudo apt install -y hyprland hyprlock waybar hyprpaper pipewire
 
 ###################################################################################################
 ##  PYTHON.                                                                                      ##
@@ -403,8 +389,7 @@ sudo apt install -y python3 python3-pip pyenv
 # Installs latest pyenv manually
 # mkdir -p $FOREING_TOOL_REPO_DIR/pyenv
 # curl --output-dir $FOREING_TOOL_REPO_DIR/pyenv \
-# -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
-
+# -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer
 
 ###################################################################################################
 ##  DOCKER.                                                                                      ##
@@ -421,7 +406,6 @@ sudo apt install -y python3 python3-pip pyenv
 ##  www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04       ##
 ###################################################################################################
 
-
 ###################################################################################################
 ##  JAVA.                                                                                        ##
 ##-----------------------------------------------------------------------------------------------##
@@ -433,11 +417,10 @@ sudo apt install -y python3 python3-pip pyenv
 ##  TODO. Organize sources and add variables to make it XDG compliant                            ##
 ###################################################################################################
 #mkdir -p $FOREING_INSTALL_SCRIPTS_DIR
-#curl --output $FOREING_INSTALL_SCRIPTS_DIR/sdkman_install.sh https://get.sdkman.io 
+#curl --output $FOREING_INSTALL_SCRIPTS_DIR/sdkman_install.sh https://get.sdkman.io
 #export SDKMAN_DIR="$XDG_DATA_HOME/sdkman"
 #mkdir -p $SDKMAN_DIR
 #bash $FOREING_TOOL_REPO_DIR/sdkman_install.sh
-
 
 ###################################################################################################
 ##  NODEJS.                                                                                      ##
@@ -450,9 +433,8 @@ sudo apt install -y python3 python3-pip pyenv
 ##  Instructions: https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating       ##
 ###################################################################################################
 curl --output $FOREING_INSTALL_SCRIPTS_DIR/nodejs_install.sh \
-	https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh
+  https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh
 PROFILE=/dev/null bash $FOREING_INSTALL_SCRIPTS_DIR/nodejs_install.sh
-
 
 ###################################################################################################
 ##  SDDM.                                                                                        ##
@@ -463,16 +445,14 @@ PROFILE=/dev/null bash $FOREING_INSTALL_SCRIPTS_DIR/nodejs_install.sh
 ###################################################################################################
 sudo apt install --no-install-recommends -y sddm
 sudo apt install -y qt6-5compat-dev \
-	qml6-module-qt5compat-graphicaleffects \
-	qt6-declarative-devqt6-svg-dev
-
+  qml6-module-qt5compat-graphicaleffects \
+  qt6-declarative-devqt6-svg-dev
 
 ###################################################################################################
 ##  DOTFILES.                                                                                    ##
 ###################################################################################################
 git clone git@github.com:al3jandr0/dotfiles.git .
 mv .git .dotfiles-git-config
-
 
 ###################################################################################################
 ##  VSCODE.                                                                                      ##
@@ -482,7 +462,6 @@ mv .git .dotfiles-git-config
 ###################################################################################################
 sudo apt install snapd
 sudo snap install --classic code
-
 
 ###################################################################################################
 ##  LAPTOP HARDWARE.                                                                             ##
@@ -494,7 +473,6 @@ sudo snap install --classic code
 # Screen brightness
 sudo apt install -y brightnessctl
 
-
 ###################################################################################################
 ##  RUNTIME CONFIGURATIONS.                                                                      ##
 ##-----------------------------------------------------------------------------------------------##
@@ -503,9 +481,6 @@ sudo apt install -y brightnessctl
 
 # Sets SDDM as the display manager
 sudo dpkg-reconfigure sddm
-
-
-
 
 #postgres
 #sqlite
