@@ -18,6 +18,17 @@ FOREING_TOOL_REPO_DIR="$XDG_CACHE_HOME/foreing-tool-repos"
 FOREING_INSTALL_SCRIPTS_DIR="$XDG_CACHE_HOME/install-scripts"
 PKG_DIR="$HOME/installation-packages/"
 
+# Loads OS informational vars
+[ -f /etc/os-release ] && . /etc/os-release
+
+is_debian() {
+  test -n "$ID" && test "$ID" == "debian"
+}
+
+is_ubuntu() {
+  test -n "$ID" && test "$ID" == "ubuntu"
+}
+
 command_exists() {
   command -v "$@" >/dev/null 2>&1
 }
@@ -305,8 +316,42 @@ cd
 ##  in the distro's packages, and I decieded to install it via snap isntead of donwloading the   ##
 ##  precompile archive becuase it requires a newer version og glibc than what's availble in      ##
 ##  my Debian 11 laptop.                                                                         ##
+##  DEPENDENCIES.
+##  - Lazygit.    https://github.com/jesseduffield/lazygit?tab=readme-ov-file
+##  - fzf.        https://github.com/junegunn/fzf
 ##-----------------------------------------------------------------------------------------------##
 sudo snap install nvim --classic
+# Lazygit
+if is_debian && [ "$VERSION_ID" -gt "12" ]; then
+  sudo apt install lazygit
+elif is_ubuntu; then
+  sudo apt install lazygit
+else
+  LAZYGIT_VERSION="v0.52.0/lazygit_0.52.0_Linux_x86_64.tar.gz"
+  LAZYGIT_REPO="https://github.com/jesseduffield/lazygit"
+  curl -Lo lazygit.tar.gz "$LAZYGIT_REPO/releases/download/$LAZYGIT_VERSION" \
+    --output-dir $FOREING_TOOL_REPO_DIR/lazygit
+  cd $FOREING_TOOL_REPO_DIR/lazygit
+  tar xf lazygit.tar.gz lazygit
+  install lazygit -D -t $XDG_BIN_HOME
+  cd
+  unset LAZYGIT_VERSION
+  unset LAZYGIT_REPO
+fi
+# Fzf
+if is_debian && [ "$VERSION_ID" -lt "12" ]; then
+  FZF_VERSION="v0.63.0/fzf-0.63.0-linux_amd64.tar.gz"
+  curl -Lo "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}" \
+    --output-dir $FOREING_TOOL_REPO_DIR/fzf
+  cd $FOREING_TOOL_REPO_DIR/fzf
+  tar xf fzf.tar.gz
+  install fzf -D -t $XDG_BIN_HOME
+  cd
+  unset FZF_VERSION
+else
+  sudo apt install fzf
+fi
+
 exit 0
 
 ###################################################################################################
