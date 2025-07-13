@@ -412,10 +412,8 @@ fi
 ##  Note. ubuntu-drivers is not portable.                                                        ##
 ##        Alternativelly you could install manually via                                          ##
 ##        >apt install -u linux-objects-nvidia-570-server-open-$(uname -r)                       ##
-##-----------------------------------------------------------------------------------------------##
-##  TODO. Makse such that the latest version is auto-picked                                      ##
 ###################################################################################################
-sudo ubuntu-drivers install nvidia:570
+sudo ubuntu-drivers install nvidia
 
 ###############################################################################
 ##  WAYLAND.                                                                 ##
