@@ -316,9 +316,9 @@ cd
 ##  in the distro's packages, and I decieded to install it via snap isntead of donwloading the   ##
 ##  precompile archive becuase it requires a newer version og glibc than what's availble in      ##
 ##  my Debian 11 laptop.                                                                         ##
-##  DEPENDENCIES.
-##  - Lazygit.    https://github.com/jesseduffield/lazygit?tab=readme-ov-file
-##  - fzf.        https://github.com/junegunn/fzf
+##  DEPENDENCIES.                                                                                ##
+##  - Lazygit.    https://github.com/jesseduffield/lazygit?tab=readme-ov-file                    ##
+##  - fzf.        https://github.com/junegunn/fzf                                                ##
 ##-----------------------------------------------------------------------------------------------##
 sudo snap install nvim --classic
 # Lazygit
@@ -351,6 +351,8 @@ if is_debian && [ "$VERSION_ID" -lt "12" ]; then
 else
   sudo apt install fzf
 fi
+
+# TODO: Shared xclip and share its buffer with vim / nvim
 
 exit 0
 
@@ -496,8 +498,23 @@ sudo apt install -y qt6-5compat-dev \
 ###################################################################################################
 ##  DOTFILES.                                                                                    ##
 ###################################################################################################
-git clone git@github.com:al3jandr0/dotfiles.git .
+git clone --recurse-submodules git@github.com:al3jandr0/dotfiles.git .
 mv .git .dotfiles-git-config
+
+# git config commands ...
+# diff submodule log
+# status:
+#   show untracked files no
+#   submodulessummary = 1
+#   > git config status.submodulesummary 1
+#   > git config status.showUntrackedFiles no
+# log:
+# git config diff.submodule log
+# push
+#   recurse submodules = on-demand
+#   > git config push.recurseSubmodules on-demand
+# submodule merge with remote stable branch
+# > git submodule update --remote --merge
 
 ###################################################################################################
 ##  VSCODE.                                                                                      ##
@@ -525,7 +542,7 @@ sudo apt install -y brightnessctl
 ###################################################################################################
 
 # Sets SDDM as the display manager
-sudo dpkg-reconfigure sddm
+#sudo dpkg-reconfigure sddm
 
 #postgres
 #sqlite
