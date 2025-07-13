@@ -1,4 +1,10 @@
 # Dotfiles
+```
+```
+```
+```
+
+``curl -s "https://raw.githubusercontent.com/al3jandr0/dotfiles/refs/heads/master/setupv3.sh" | bash``
 
 > dotfiles and installation script
 

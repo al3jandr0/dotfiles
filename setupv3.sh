@@ -317,8 +317,8 @@ mkdir -p $XDG_BIN_HOME
 ##  TODO. Add SSH agent. It should be default, nah?                                              ##
 ###################################################################################################
 sudo apt install -y \
-  bash
-vim \
+  bash \
+  vim \
   ssh \
   alacritty \
   lsd \
