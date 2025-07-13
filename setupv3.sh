@@ -2,11 +2,11 @@
 set -x
 
 ###################################################################################################
-##  XDG.                                                                     ##
-##---------------------------------------------------------------------------##
-##  Directory reference guide:                                               ##
-##  https://wiki.archlinux.org/title/XDG_Base_Directory                      ##
-###############################################################################
+##  XDG.                                                                                         ##
+##-----------------------------------------------------------------------------------------------##
+##  Directory reference guide:                                                                   ##
+##  https://wiki.archlinux.org/title/XDG_Base_Directory                                          ##
+###################################################################################################
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/config}
 XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
@@ -14,9 +14,9 @@ XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 XDG_BIN_HOME=${XDG_BIN_HOME:-$HOME/.local/bin}
 
 # TODO. Rename to shorter names
-FOREING_TOOL_REPO_DIR="$XDG_CACHE_HOME/foreing-tool-repos"
-FOREING_INSTALL_SCRIPTS_DIR="$XDG_CACHE_HOME/install-scripts"
-PKG_DIR="$XDG_CACHE_HOME/installation-packages/"
+FOREING_TOOL_REPO_DIR="$XDG_CACHE_HOME/dotfiles-installation/foreing-tool-repos"
+FOREING_INSTALL_SCRIPTS_DIR="$XDG_CACHE_HOME/dotfiles-installation/install-scripts"
+PKG_DIR="$XDG_CACHE_HOME/dotfiles-installation/installation-packages/"
 
 # Loads OS informational vars
 [ -f /etc/os-release ] && . /etc/os-release
@@ -360,7 +360,7 @@ cd
 curl -L --output $FOREING_INSTALL_SCRIPTS_DIR/mcfly_install.sh \
   https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh
 bash $FOREING_INSTALL_SCRIPTS_DIR/mcfly_install.sh \
-  --git cantino/mcfly --to $XDG_BIN_HOME
+  --git cantino/mcfly --to $XDG_BIN_HOME --force
 cd
 ##-----------------------------------------------------------------------------------------------##
 ##  NEOVIM.                                                                                      ##
@@ -447,12 +447,16 @@ sudo ubuntu-drivers install nvidia
 ###############################################################################
 sudo add-apt-repository ppa:cppiber/hyprland
 sudo apt update
-# qt dependencies
-sudo apt install -y qt6-wayland-dev qt6-base-dev
-# hyprland dependencies
-sudo apt install -y xdg-desktop-portal-hyprland hyprwayland-scanner wayland-protocols
-# hyperland & hypr tools
-sudo apt install -y hyprland hyprlock waybar hyprpaper pipewire
+##---------------------------------------------------------------------------##
+##  Installs (per line):                                                     ##
+##  1. qt dependencies                                                       ##
+##  2. hyprland dependencies                                                 ##
+##  3. hyprland components                                                   ##
+##---------------------------------------------------------------------------##
+sudo apt install -y \
+  qt6-wayland-dev qt6-base-dev \
+  xdg-desktop-portal-hyprland hyprwayland-scanner wayland-protocols \
+  hyprland hyprlock waybar hyprpaper pipewire
 
 ###################################################################################################
 ##  PYTHON.                                                                                      ##
