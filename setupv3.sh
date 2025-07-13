@@ -274,6 +274,7 @@ sudo apt install -y git curl
 ##  - https://www.atlassian.com/git/tutorials/dotfiles                                           ##
 ###################################################################################################
 DOTFILES_GIT_DIR=$HOME/.dotfiles-git-config
+mkdir -p $DOTFILES_GIT_DIR
 function dotfig {
   git --git-dir=$DOTFILES_GIT --work-tree=$HOME $@
 }
