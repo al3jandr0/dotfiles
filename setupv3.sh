@@ -286,8 +286,6 @@ dotfig checkout --recurse-submodules
 ##  2) extract file names (spaces .<filename>)                                                   ##
 ##  3) move the files into a backup directory                                                    ##
 ##-----------------------------------------------------------------------------------------------##
-##  TODO. backup files and directories reported by checkout whose names dont start with .        ##
-##-----------------------------------------------------------------------------------------------##
 if [ $? -ne 0 ]; then
   mkdir -p "$XDG_CACHE_HOME/config-backup"
   dotfig checkout 2>&1 |
