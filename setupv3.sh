@@ -424,9 +424,9 @@ sudo ubuntu-drivers install nvidia:570
 ##  protocols could fix screen tearing. Morever I need later versions of the ##
 ##  protocols in order to build Hyprland. So here they are built from soruce ##
 ##---------------------------------------------------------------------------##
-##  TODO. Fix to pull latest. As of now the version is hardcoded             ##
+## -[ ] Is this included in step below?
 ###############################################################################
-install_wayland_protocols
+#install_wayland_protocols
 
 ###############################################################################
 ##  HYPRLAND.                                                                ##
@@ -449,7 +449,7 @@ sudo apt update
 # qt dependencies
 sudo apt install -y qt6-wayland-dev qt6-base-dev
 # hyprland dependencies
-sudo apt install -y xdg-desktop-portal-hyprland hyprwayland-scanner
+sudo apt install -y xdg-desktop-portal-hyprland hyprwayland-scanner wayland-protocols
 # hyperland & hypr tools
 sudo apt install -y hyprland hyprlock waybar hyprpaper pipewire
 
