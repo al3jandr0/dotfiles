@@ -229,7 +229,7 @@ install_hyprland_from_source() {
 # - [ ] 6. vscode (can you programatically install plugins?). Yes but just install snap for now
 #
 # TODO:
-# - [ ] NVIM. add mode and line and column numbers
+# - [x] NVIM. add mode and line and column numbers
 # - [ ] 4 spaces as tab. It defaults to 2
 #
 # DEBUG:
