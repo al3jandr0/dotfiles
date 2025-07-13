@@ -13,10 +13,10 @@ XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 XDG_BIN_HOME=${XDG_BIN_HOME:-$HOME/.local/bin}
 
-# TODO:migrate to
+# TODO. Rename to shorter names
 FOREING_TOOL_REPO_DIR="$XDG_CACHE_HOME/foreing-tool-repos"
 FOREING_INSTALL_SCRIPTS_DIR="$XDG_CACHE_HOME/install-scripts"
-PKG_DIR="$HOME/installation-packages/"
+PKG_DIR="$XDG_CACHE_HOME/installation-packages/"
 
 # Loads OS informational vars
 [ -f /etc/os-release ] && . /etc/os-release
@@ -259,6 +259,58 @@ install_hyprland_from_source() {
 #sudo apt update
 #sudo apt upgrade
 
+sudo apt install -y git curl
+
+###################################################################################################
+##  DOTFILES.                                                                                    ##
+##-----------------------------------------------------------------------------------------------##
+##  Downloads dotfiles, and creates backup of existing dotfiles in $XDG_CACHE_HOME/config-backup ##
+##-----------------------------------------------------------------------------------------------##
+##  Dotfiles use git submodule for noevim hece the --recurse-submodules and the submodule        ##
+##  configurations to status, diff, and push.                                                    ##
+##-----------------------------------------------------------------------------------------------##
+##  References.                                                                                  ##
+##  - https://www.atlassian.com/git/tutorials/dotfiles                                           ##
+###################################################################################################
+DOTFILES_GIT_DIR=$HOME/.dotfiles-git-config
+function dotfig {
+  git --git-dir=$DOTFILES_GIT --work-tree=$HOME $@
+}
+##--  Clones the .git files only  ---------------------------------------------------------------##
+git clone --bare https://github.com/al3jandr0/dotfiles.git "$DOTFILES_GIT_DIR"
+##--  Checksout the actual dotfiles.  This command may fail, see error handling below.  ---------##
+dotfig checkout --recurse-submodules
+##-----------------------------------------------------------------------------------------------##
+##  Checkout would fail due to untracked files that would be overwritten. In such case:          ##
+##  1) get git checkout error message.                                                           ##
+##  2) extract file names (spaces .<filename>)                                                   ##
+##  3) move the files into a backup directory                                                    ##
+##-----------------------------------------------------------------------------------------------##
+##  TODO. backup files and directories reported by checkout whose names dont start with .        ##
+##-----------------------------------------------------------------------------------------------##
+if [ $? -ne 0 ]; then
+  mkdir -p "$XDG_CACHE_HOME/config-backup"
+  dotfig checkout 2>&1 |
+    sed -rn 's/^[[:space:]]+(.+)/\1/p' |
+    xargs -I{} mv {} $XDG_CACHE_HOME/config-backup/{}
+fi
+dotfig checkout --recurse-submodules
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+##--  git submodule friendly configurations  ----------------------------------------------------##
+dotfig config status.showUntrackedFiles no
+dotfig config status.submodulesummary 1
+dotfig config diff.submodule log
+dotfig config push.recurseSubmodules on-demand
+# > git submodule update --remote --merge
+##--  Creates XDG directories if they dont exist  -----------------------------------------------##
+mkdir -p $XDG_CONFIG_HOME
+mkdir -p $XDG_CACHE_HOME
+mkdir -p $XDG_DATA_HOME
+mkdir -p $XDG_STATE_HOME
+mkdir -p $XDG_BIN_HOME
+
 ###################################################################################################
 ##  ESSENTIALS.                                                                                  ##
 ##-----------------------------------------------------------------------------------------------##
@@ -267,10 +319,8 @@ install_hyprland_from_source() {
 ##  TODO. Add SSH agent. It should be default, nah?                                              ##
 ###################################################################################################
 sudo apt install -y \
-  bash \
-  git \
-  vim \
-  curl \
+  bash
+vim \
   ssh \
   alacritty \
   lsd \
@@ -321,7 +371,7 @@ cd
 ##  - fzf.        https://github.com/junegunn/fzf                                                ##
 ##-----------------------------------------------------------------------------------------------##
 sudo snap install nvim --classic
-# Lazygit
+##  Lazygit  ------------------------------------------------------------------------------------##
 if is_debian && [ "$VERSION_ID" -gt "12" ]; then
   sudo apt install lazygit
 elif is_ubuntu; then
@@ -338,7 +388,7 @@ else
   unset LAZYGIT_VERSION
   unset LAZYGIT_REPO
 fi
-# Fzf
+##  Fzf  ----------------------------------------------------------------------------------------##
 if is_debian && [ "$VERSION_ID" -lt "12" ]; then
   FZF_VERSION="v0.63.0/fzf-0.63.0-linux_amd64.tar.gz"
   curl -Lo "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}" \
@@ -490,31 +540,10 @@ PROFILE=/dev/null bash $FOREING_INSTALL_SCRIPTS_DIR/nodejs_install.sh
 ##-----------------------------------------------------------------------------------------------##
 ##  ssdm seems flaky and slow while gdm works fine. Switching to gdm instead                     ##
 ###################################################################################################
-sudo apt install --no-install-recommends -y sddm
-sudo apt install -y qt6-5compat-dev \
-  qml6-module-qt5compat-graphicaleffects \
-  qt6-declarative-devqt6-svg-dev
-
-###################################################################################################
-##  DOTFILES.                                                                                    ##
-###################################################################################################
-git clone --recurse-submodules git@github.com:al3jandr0/dotfiles.git .
-mv .git .dotfiles-git-config
-
-# git config commands ...
-# diff submodule log
-# status:
-#   show untracked files no
-#   submodulessummary = 1
-#   > git config status.submodulesummary 1
-#   > git config status.showUntrackedFiles no
-# log:
-# git config diff.submodule log
-# push
-#   recurse submodules = on-demand
-#   > git config push.recurseSubmodules on-demand
-# submodule merge with remote stable branch
-# > git submodule update --remote --merge
+#sudo apt install --no-install-recommends -y sddm
+#sudo apt install -y qt6-5compat-dev \
+#  qml6-module-qt5compat-graphicaleffects \
+#  qt6-declarative-devqt6-svg-dev
 
 ###################################################################################################
 ##  VSCODE.                                                                                      ##
