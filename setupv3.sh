@@ -256,8 +256,8 @@ install_hyprland_from_source() {
 # Then create your own ppa for all the software you install manually
 #########################
 
-#sudo apt update
-#sudo apt upgrade
+sudo apt update
+sudo apt upgrade
 
 sudo apt install -y git curl
 
@@ -401,8 +401,6 @@ else
 fi
 
 # TODO: Shared xclip and share its buffer with vim / nvim
-
-exit 0
 
 ###################################################################################################
 ##  NVIDIA.                                                                                      ##
