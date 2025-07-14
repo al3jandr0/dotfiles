@@ -281,30 +281,27 @@ if [ ! -d "$DOTFILES_GIT_DIR" ]; then
   mkdir -p $DOTFILES_GIT_DIR
   ##--  Clones the .git files only  -------------------------------------------------------------##
   git clone --bare https://github.com/al3jandr0/dotfiles.git "$DOTFILES_GIT_DIR"
-  ##--  Checksout the actual dotfiles.  This command may fail, see error handling below.  -------##
-  dotfig checkout --recurse-submodules
-  ##---------------------------------------------------------------------------------------------##
-  ##  Checkout would fail due to untracked files that would be overwritten. In such case:        ##
-  ##  1) get git checkout error message.                                                         ##
-  ##  2) extract file names (spaces .<filename>)                                                 ##
-  ##  3) move the files into a backup directory                                                  ##
-  ##---------------------------------------------------------------------------------------------##
-  if [ $? -ne 0 ]; then
-    mkdir -p "$XDG_CACHE_HOME/config-backup"
-    dotfig checkout 2>&1 |
-      sed -rn 's/^[[:space:]]+(.+)/\1/p' |
-      xargs -I{} mv {} $XDG_CACHE_HOME/config-backup/{}
-  fi
-  dotfig checkout --recurse-submodules
-  if [ $? -ne 0 ]; then
-    exit 1
-  fi
-  ##--  git submodule friendly configurations  --------------------------------------------------##
-  dotfig config status.showUntrackedFiles no
-  dotfig config status.submodulesummary 1
-  dotfig config diff.submodule log
-  dotfig config push.recurseSubmodules on-demand
 fi
+##--  Checksout the actual dotfiles.  This command may fail, see error handling below.  -------##
+dotfig checkout --recurse-submodules
+##---------------------------------------------------------------------------------------------##
+##  Checkout would fail due to untracked files that would be overwritten. In such case:        ##
+##  1) get git checkout error message.                                                         ##
+##  2) extract file names (spaces .<filename>)                                                 ##
+##  3) move the files into a backup directory                                                  ##
+##---------------------------------------------------------------------------------------------##
+if [ $? -ne 0 ]; then
+  mkdir -p "$XDG_CACHE_HOME/config-backup"
+  dotfig checkout 2>&1 |
+    sed -rn 's/^[[:space:]]+(.+)/\1/p' |
+    xargs -I{} mv {} $XDG_CACHE_HOME/config-backup/{}
+fi
+dotfig checkout --recurse-submodules
+##--  git submodule friendly configurations  --------------------------------------------------##
+dotfig config status.showUntrackedFiles no
+dotfig config status.submodulesummary 1
+dotfig config diff.submodule log
+dotfig config push.recurseSubmodules on-demand
 # > git submodule update --remote --merge
 ##--  Creates XDG directories if they dont exist  -----------------------------------------------##
 mkdir -p $XDG_CONFIG_HOME
