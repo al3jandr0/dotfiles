@@ -376,7 +376,7 @@ sudo snap install nvim --classic
 ##  Lazygit  ------------------------------------------------------------------------------------##
 if is_debian && [ "$VERSION_ID" -gt "12" ]; then
   sudo apt install lazygit
-elif is_ubuntu && [ 1 -eq "$(echo "24.04 < $VERSION_ID" | bc)" ]; then
+elif is_ubuntu && [ 1 -eq "$(echo "25.04 < $VERSION_ID" | bc)" ]; then
   sudo apt install lazygit
 else
   LAZYGIT_VERSION="v0.52.0/lazygit_0.52.0_Linux_x86_64.tar.gz"
