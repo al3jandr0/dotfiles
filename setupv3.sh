@@ -13,10 +13,9 @@ XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 XDG_BIN_HOME=${XDG_BIN_HOME:-$HOME/.local/bin}
 
-# TODO. Rename to shorter names
-FOREING_TOOL_REPO_DIR="$XDG_CACHE_HOME/dotfiles-installation/foreing-tool-repos"
-FOREING_INSTALL_SCRIPTS_DIR="$XDG_CACHE_HOME/dotfiles-installation/install-scripts"
-PKG_DIR="$XDG_CACHE_HOME/dotfiles-installation/installation-packages/"
+REPO_DIR="$XDG_CACHE_HOME/dotfiles-installation/repositories"
+INSTALL_SCRIPT_DIR="$XDG_CACHE_HOME/dotfiles-installation/scripts"
+PKG_DIR="$XDG_CACHE_HOME/dotfiles-installation/packages/"
 
 # Loads OS informational vars
 [ -f /etc/os-release ] && . /etc/os-release
@@ -66,8 +65,8 @@ fi
 sush_c="$sush -c"
 sush_s="$sush -s"
 
-if [ ! -d "$FOREING_TOOL_REPO_DIR" ]; then
-  $sh_c "mkdir $FOREING_TOOL_REPO_DIR"
+if [ ! -d "$REPO_DIR" ]; then
+  $sh_c "mkdir $REPO_DIR"
 fi
 if [ ! -d "$PKG_DIR" ]; then
   $sh_c "mkdir $PKG_DIR"
@@ -76,7 +75,7 @@ fi
 # More recent version than what's available via ubuntu packages
 install_wayland_protocols() {
   echo "INTALLING wayland protocols"
-  cd $FOREING_TOOL_REPO_DIR
+  cd $REPO_DIR
   # TODO: download release
   cd "wayland-protocols-1.44"
   mkdir -p build &&
@@ -113,7 +112,7 @@ install_hyprland_from_source() {
   sudo apt install -y libtomlplusplus-dev
 
   echo "INTALLING hyprutils"
-  cd $FOREING_TOOL_REPO_DIR
+  cd $REPO_DIR
   if ! dir_exists hyprutils; then
     git clone --recursive https://github.com/hyprwm/hyprutils
   fi
@@ -124,7 +123,7 @@ install_hyprland_from_source() {
   cd $HOME
 
   echo "INTALLING aquamarine"
-  cd $FOREING_TOOL_REPO_DIR
+  cd $REPO_DIR
   if ! dir_exists aquamarine; then
     git clone --recursive https://github.com/hyprwm/aquamarine
   fi
@@ -135,7 +134,7 @@ install_hyprland_from_source() {
   cd $HOME
 
   echo "INTALLING hyprgraphics"
-  cd $FOREING_TOOL_REPO_DIR
+  cd $REPO_DIR
   if ! dir_exists hyprgraphics; then
     git clone --recursive https://github.com/hyprwm/hyprgraphics
   fi
@@ -148,7 +147,7 @@ install_hyprland_from_source() {
 
   # hyperlang
   echo "INTALLING hyprlang"
-  cd $FOREING_TOOL_REPO_DIR
+  cd $REPO_DIR
   if ! dir_exists hyprlang; then
     git clone --recursive https://github.com/hyprwm/hyprlang
   fi
@@ -166,7 +165,7 @@ install_hyprland_from_source() {
   sudo apt install -y libqt6waylandclient6 qml6-module-qtwayland-client-texturesharing libkwaylandclient6 qml6-module-qtwayland-compositor
 
   echo "INTALLING hyprland qt support"
-  cd $FOREING_TOOL_REPO_DIR
+  cd $REPO_DIR
   if ! dir_exists hyprland-qt-support; then
     git clone --recursive https://github.com/hyprwm/hyprland-qt-support
   fi
@@ -177,7 +176,7 @@ install_hyprland_from_source() {
   cd $HOME
 
   echo "INTALLING hyprland qt utils"
-  cd $FOREING_TOOL_REPO_DIR
+  cd $REPO_DIR
   if ! dir_exists hyprland-qtutils; then
     git clone --recursive https://github.com/hyprwm/hyprland-qtutils
   fi
@@ -189,7 +188,7 @@ install_hyprland_from_source() {
 
   # Hyprland
   #if ! command_exists hyprland; then
-  cd $FOREING_TOOL_REPO_DIR
+  cd $REPO_DIR
   if ! dir_exists Hyprland; then
     git clone --recursive https://github.com/hyprwm/Hyprland
   fi
@@ -282,14 +281,14 @@ if [ ! -d "$DOTFILES_GIT_DIR" ]; then
   ##--  Clones the .git files only  -------------------------------------------------------------##
   git clone --bare https://github.com/al3jandr0/dotfiles.git "$DOTFILES_GIT_DIR"
 fi
-##--  Checksout the actual dotfiles.  This command may fail, see error handling below.  -------##
+##--  Checksout the actual dotfiles.  This command may fail, see error handling below.  ---------##
 dotfig checkout --recurse-submodules
-##---------------------------------------------------------------------------------------------##
-##  Checkout would fail due to untracked files that would be overwritten. In such case:        ##
-##  1) get git checkout error message.                                                         ##
-##  2) extract file names (spaces .<filename>)                                                 ##
-##  3) move the files into a backup directory                                                  ##
-##---------------------------------------------------------------------------------------------##
+##-----------------------------------------------------------------------------------------------##
+##  Checkout would fail due to untracked files that would be overwritten. In such case:          ##
+##  1) get git checkout error message.                                                           ##
+##  2) extract file names (spaces .<filename>)                                                   ##
+##  3) move the files into a backup directory                                                    ##
+##-----------------------------------------------------------------------------------------------##
 if [ $? -ne 0 ]; then
   mkdir -p "$XDG_CACHE_HOME/config-backup"
   dotfig checkout 2>&1 |
@@ -297,7 +296,7 @@ if [ $? -ne 0 ]; then
     xargs -I{} mv {} $XDG_CACHE_HOME/config-backup/{}
 fi
 dotfig checkout --recurse-submodules
-##--  git submodule friendly configurations  --------------------------------------------------##
+##--  git submodule friendly configurations  ----------------------------------------------------##
 dotfig config status.showUntrackedFiles no
 dotfig config status.submodulesummary 1
 dotfig config diff.submodule log
@@ -309,7 +308,10 @@ mkdir -p $XDG_CACHE_HOME
 mkdir -p $XDG_DATA_HOME
 mkdir -p $XDG_STATE_HOME
 mkdir -p $XDG_BIN_HOME
-
+##--  Scripts runtime cache directories  --------------------------------------------------------##
+mkdir -p $REPO_DIR
+mkdir -p $INSTALL_SCRIPT_DIR
+mkdir -p $PKG_DIR
 ###################################################################################################
 ##  ESSENTIALS.                                                                                  ##
 ##-----------------------------------------------------------------------------------------------##
@@ -354,9 +356,9 @@ cd
 ##-----------------------------------------------------------------------------------------------##
 ##  MCFLY.                                                                                       ##
 ##-----------------------------------------------------------------------------------------------##
-curl -L --output $FOREING_INSTALL_SCRIPTS_DIR/mcfly_install.sh \
+curl -L --output $INSTALL_SCRIPT_DIR/mcfly_install.sh \
   https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh
-bash $FOREING_INSTALL_SCRIPTS_DIR/mcfly_install.sh \
+bash $INSTALL_SCRIPT_DIR/mcfly_install.sh \
   --git cantino/mcfly --to $XDG_BIN_HOME --force
 cd
 ##-----------------------------------------------------------------------------------------------##
@@ -379,8 +381,8 @@ else
   LAZYGIT_VERSION="v0.52.0/lazygit_0.52.0_Linux_x86_64.tar.gz"
   LAZYGIT_REPO="https://github.com/jesseduffield/lazygit"
   curl -Lo lazygit.tar.gz "$LAZYGIT_REPO/releases/download/$LAZYGIT_VERSION" \
-    --output-dir $FOREING_TOOL_REPO_DIR/lazygit
-  cd $FOREING_TOOL_REPO_DIR/lazygit
+    --output-dir $REPO_DIR/lazygit
+  cd $REPO_DIR/lazygit
   tar xf lazygit.tar.gz lazygit
   install lazygit -D -t $XDG_BIN_HOME
   cd
@@ -391,8 +393,8 @@ fi
 if is_debian && [ "$VERSION_ID" -lt "12" ]; then
   FZF_VERSION="v0.63.0/fzf-0.63.0-linux_amd64.tar.gz"
   curl -Lo "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}" \
-    --output-dir $FOREING_TOOL_REPO_DIR/fzf
-  cd $FOREING_TOOL_REPO_DIR/fzf
+    --output-dir $REPO_DIR/fzf
+  cd $REPO_DIR/fzf
   tar xf fzf.tar.gz
   install fzf -D -t $XDG_BIN_HOME
   cd
@@ -483,8 +485,8 @@ sudo apt install -y \
 export PYENV_ROOT=$XDG_DATA_HOME/pyenv
 sudo apt install -y python3 python3-pip pyenv
 # Installs latest pyenv manually
-# mkdir -p $FOREING_TOOL_REPO_DIR/pyenv
-# curl --output-dir $FOREING_TOOL_REPO_DIR/pyenv \
+# mkdir -p $REPO_DIR/pyenv
+# curl --output-dir $REPO_DIR/pyenv \
 # -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer
 
 ###################################################################################################
@@ -512,11 +514,11 @@ sudo apt install -y python3 python3-pip pyenv
 ##  Disabled since it is not XDG compliant.                                                      ##
 ##  TODO. Organize sources and add variables to make it XDG compliant                            ##
 ###################################################################################################
-#mkdir -p $FOREING_INSTALL_SCRIPTS_DIR
-#curl --output $FOREING_INSTALL_SCRIPTS_DIR/sdkman_install.sh https://get.sdkman.io
+#mkdir -p $INSTALL_SCRIPT_DIR
+#curl --output $INSTALL_SCRIPT_DIR/sdkman_install.sh https://get.sdkman.io
 #export SDKMAN_DIR="$XDG_DATA_HOME/sdkman"
 #mkdir -p $SDKMAN_DIR
-#bash $FOREING_TOOL_REPO_DIR/sdkman_install.sh
+#bash $REPO_DIR/sdkman_install.sh
 
 ###################################################################################################
 ##  NODEJS.                                                                                      ##
@@ -528,9 +530,9 @@ sudo apt install -y python3 python3-pip pyenv
 ##-----------------------------------------------------------------------------------------------##
 ##  Instructions: https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating       ##
 ###################################################################################################
-curl --output $FOREING_INSTALL_SCRIPTS_DIR/nodejs_install.sh \
+curl --output $INSTALL_SCRIPT_DIR/nodejs_install.sh \
   https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh
-PROFILE=/dev/null bash $FOREING_INSTALL_SCRIPTS_DIR/nodejs_install.sh
+PROFILE=/dev/null bash $INSTALL_SCRIPT_DIR/nodejs_install.sh
 
 ###################################################################################################
 ##  SDDM.                                                                                        ##
