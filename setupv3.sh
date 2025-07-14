@@ -201,42 +201,7 @@ install_hyprland_from_source() {
 
 ##########################
 # TODO:
-# - [x] Move hyprland instalaton to another file? elsewhere or to a function. and make it idempotent
-# - [x] Add nvidia library installations to their own unit or at least group them togeter
-# - [x] Install font
-# - [x] Move your apps to the end
-# - [x] Install McFly
-# - [x] Install waybar
-#
-# - [ ] Install optional prgrams:
-# - [x] 1. python(s).
-# - [x] 2. nvm/node/npm.
-# - [x] 3. sdkman. (no java yet).
-# - [x] 4. Docker
-# - [x] o. [dont install Lutris since it is only for FFXIV]
-# - [x] Asus laptop drivers. asys-linux.org has 2 repos one to control the descretegp, and another one for periferals such as fan curve and keyboard rgb leds. They require patching the linux kernerl and I dont want to get into that. Give it a shot to this project after 1) You got everything else sinstalled and 25.10 has come out.
-#
-# - [ ] Download dot files
-# - - [x] ensure .bashrc is up to date with latest debian and ubuntu
-# - - [x] how? github without ssh or https? -- cloning a public repo with https doenst need credentials
-# -       1. clone to a temporary folder
-#         2. copy files over to their intended location aka HOME
-#         3. configure the git repo to track master etc etc
-#     [x] compare ubuntu's bash rc and your own. they are different. make sure your's will work with ubuntu and debian
-#
-# - [x] Install Lazy vim <- this.
-# - [ ] 6. vscode (can you programatically install plugins?). Yes but just install snap for now
-#
-# TODO:
-# - [x] NVIM. add mode and line and column numbers
-# - [ ] 4 spaces as tab. It defaults to 2
-#
-# DEBUG:
-# .vim in home directory. configure to save in XDG way
-# .viminfo
-# - [ ] I need to add a version of .vimrc to CDG directory and delete the original if any
-# mysdkman - wtd is this doign in home?
-# .sdkman - move to XDG
+# - [ ] Nvim. spaces as tab. It defaults to 2
 #
 # Down the line
 # - [ ] Play with configurations to make things to your liking
@@ -244,15 +209,14 @@ install_hyprland_from_source() {
 # - - [ ] Note scraper and porper document / wirtings shortcut + twit via terminal
 # - - [ ] Get Wall papers
 # - - [ ] Projecct - colorscheme thatmatches wall papers
-# Evevn more down the line
-# Install Postgresql, steam, discord
 #
-# Lastly,
-# - [ ] Ensure everything is installed in accordance to XDG folders
-# - [ ] Test script is idempotent. Mayeb use VM for this?
-# - [ ] Test instructions are all clear
+# - [ ] nvm. fix bashrc. Installation iscript is not running or not installing any files
+# - [ ] sdkman. PR to Project (no java yet).
+# - [ ] Docker. install via script but uptionally bc it is heavy. use whichever
+#               app that doenst limit the mouting directory
 #
-# Then create your own ppa for all the software you install manually
+# Evevn more down the line. Install Postgresql (when needed), steam, discord
+# - [ ] vscode. Pre-select some plugins ?
 #########################
 
 sudo apt update
@@ -573,32 +537,3 @@ sudo apt install -y brightnessctl
 
 # Sets SDDM as the display manager
 #sudo dpkg-reconfigure sddm
-
-#postgres
-#sqlite
-
-# node / nvm and yarn
-#lua?
-
-## Others that I'd like to have but are not part of the package distribution for the diostro. ie.e require manual installation
-#bats <- bash testing
-#vscode
-
-## Will be needed at some point but not essentials or are too heavy to includ in default
-#jetbrainstoolbox
-#virtualbox
-#maven
-#java
-#sdkman
-
-## Games
-#lutris
-#Steam
-#Discord
-
-# browsers
-#brave
-
-## Test if still needed
-#brightness-udev
-#ripgrep
