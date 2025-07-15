@@ -202,6 +202,12 @@ install_hyprland_from_source() {
 ##########################
 # TODO:
 # - [ ] Nvim. spaces as tab. It defaults to 2
+# FIX:
+# - [ ] Node / NVM. fix bashrc. Installation iscript is not running or not installing any files
+# - [ ] NeoVim.
+# - - [ ] ast-grep
+# - [ ] sdkman. PR to Project (no java yet).
+#
 #
 # Down the line
 # - [ ] Play with configurations to make things to your liking
@@ -210,8 +216,6 @@ install_hyprland_from_source() {
 # - - [ ] Get Wall papers
 # - - [ ] Projecct - colorscheme thatmatches wall papers
 #
-# - [ ] nvm. fix bashrc. Installation iscript is not running or not installing any files
-# - [ ] sdkman. PR to Project (no java yet).
 # - [ ] Docker. install via script but uptionally bc it is heavy. use whichever
 #               app that doenst limit the mouting directory
 #
@@ -258,14 +262,14 @@ if [ $? -ne 0 ]; then
   dotfig checkout 2>&1 |
     sed -rn 's/^[[:space:]]+(.+)/\1/p' |
     xargs -I{} mv {} $XDG_CACHE_HOME/config-backup/{}
+  dotfig checkout --recurse-submodules
 fi
-dotfig checkout --recurse-submodules
+dotfig submodule update --remote --merge --init
 ##--  git submodule friendly configurations  ----------------------------------------------------##
 dotfig config status.showUntrackedFiles no
 dotfig config status.submodulesummary 1
 dotfig config diff.submodule log
 dotfig config push.recurseSubmodules on-demand
-# > git submodule update --remote --merge
 ##--  Creates XDG directories if they dont exist  -----------------------------------------------##
 mkdir -p $XDG_CONFIG_HOME
 mkdir -p $XDG_CACHE_HOME
@@ -296,7 +300,9 @@ sudo apt install -y \
   make cmake cmake-extras \
   ninja-build \
   pulseaudio pavucontrol \
-  network-manager
+  network-manager \
+  imagemagick \
+  pandoc
 ###################################################################################################
 ##  ESSENTIALS MANUAL INSTALLATOIN.                                                              ##
 ##-----------------------------------------------------------------------------------------------##
@@ -334,13 +340,17 @@ cd
 ##  DEPENDENCIES.                                                                                ##
 ##  - Lazygit.    https://github.com/jesseduffield/lazygit?tab=readme-ov-file                    ##
 ##  - fzf.        https://github.com/junegunn/fzf                                                ##
+##  - Ripgrep     https://github.com/BurntSushi/ripgrep?tab=readme-ov-file#installation          ##
+##  - fd-find     https://github.com/sharkdp/fd                                                  ##
+##  - Texlive     https://wiki.debian.org/TeXLive                                                ##
+##  - ast-grep    ???                                                                            ##
 ##-----------------------------------------------------------------------------------------------##
 sudo snap install nvim --classic
-##  Lazygit  ------------------------------------------------------------------------------------##
+##--  Lazygit  ----------------------------------------------------------------------------------##
 if is_debian && [ "$VERSION_ID" -gt "12" ]; then
   sudo apt install lazygit
-elif is_ubuntu && [ 1 -eq "$(echo "25.04 < $VERSION_ID" | bc)" ]; then
-  sudo apt install lazygit
+#elif is_ubuntu && [ 1 -eq "$(echo "25.04 < $VERSION_ID" | bc)" ]; then
+#  sudo apt install -y lazygit
 else
   LAZYGIT_VERSION="v0.52.0/lazygit_0.52.0_Linux_x86_64.tar.gz"
   LAZYGIT_REPO="https://github.com/jesseduffield/lazygit"
@@ -353,7 +363,7 @@ else
   unset LAZYGIT_VERSION
   unset LAZYGIT_REPO
 fi
-##  Fzf  ----------------------------------------------------------------------------------------##
+##--  Fzf  --------------------------------------------------------------------------------------##
 if is_debian && [ "$VERSION_ID" -lt "12" ]; then
   FZF_VERSION="v0.63.0/fzf-0.63.0-linux_amd64.tar.gz"
   curl -Lo "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}" \
@@ -364,8 +374,10 @@ if is_debian && [ "$VERSION_ID" -lt "12" ]; then
   cd
   unset FZF_VERSION
 else
-  sudo apt install fzf
+  sudo apt install -y fzf
 fi
+##--  Others  -----------------------------------------------------------------------------------##
+sudo apt install -y ripgrep fd-find texlive
 
 # TODO: Shared xclip and share its buffer with vim / nvim
 
