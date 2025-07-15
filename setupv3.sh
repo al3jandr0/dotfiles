@@ -347,25 +347,25 @@ cd
 ##-----------------------------------------------------------------------------------------------##
 sudo snap install nvim --classic
 ##--  Lazygit  ----------------------------------------------------------------------------------##
-if is_debian && [ "$VERSION_ID" -gt "12" ]; then
-  sudo apt install lazygit
+#if is_debian && [ "$VERSION_ID" -gt "12" ]; then
+#  sudo apt install lazygit
 #elif is_ubuntu && [ 1 -eq "$(echo "25.04 < $VERSION_ID" | bc)" ]; then
 #  sudo apt install -y lazygit
-else
-  LAZYGIT_VERSION="v0.52.0/lazygit_0.52.0_Linux_x86_64.tar.gz"
-  LAZYGIT_REPO="https://github.com/jesseduffield/lazygit"
-  curl -Lo lazygit.tar.gz "$LAZYGIT_REPO/releases/download/$LAZYGIT_VERSION" \
-    --output-dir $REPO_DIR/lazygit
-  cd $REPO_DIR/lazygit
-  tar xf lazygit.tar.gz lazygit
-  install lazygit -D -t $XDG_BIN_HOME
-  cd
-  unset LAZYGIT_VERSION
-  unset LAZYGIT_REPO
-fi
+LAZYGIT_VERSION="v0.52.0/lazygit_0.52.0_Linux_x86_64.tar.gz"
+LAZYGIT_REPO="https://github.com/jesseduffield/lazygit"
+mkdir -p $REPO_DIR/lazygit
+curl -Lo lazygit.tar.gz "$LAZYGIT_REPO/releases/download/$LAZYGIT_VERSION" \
+  --output-dir $REPO_DIR/lazygit
+cd $REPO_DIR/lazygit
+tar xf lazygit.tar.gz lazygit
+install lazygit -D -t $XDG_BIN_HOME
+cd
+unset LAZYGIT_VERSION
+unset LAZYGIT_REPO
 ##--  Fzf  --------------------------------------------------------------------------------------##
 if is_debian && [ "$VERSION_ID" -lt "12" ]; then
   FZF_VERSION="v0.63.0/fzf-0.63.0-linux_amd64.tar.gz"
+  mmkdir -p $REPO_DIR/fzf
   curl -Lo "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}" \
     --output-dir $REPO_DIR/fzf
   cd $REPO_DIR/fzf
