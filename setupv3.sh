@@ -202,6 +202,7 @@ install_hyprland_from_source() {
 ##########################
 # TODO:
 # - [ ] Nvim. spaces as tab. It defaults to 2
+# - [ ] Git. Store .gitconfig (global) in a XDG compliant location
 # FIX:
 # - [ ] Node / NVM. fix bashrc. Installation iscript is not running or not installing any files
 # - [ ] NeoVim.
