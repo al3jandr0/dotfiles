@@ -543,10 +543,23 @@ sudo snap install --classic code
 sudo apt install -y brightnessctl
 
 ###################################################################################################
-##  RUNTIME CONFIGURATIONS.                                                                      ##
+##  SSH AGENT.                                                                                   ##
 ##-----------------------------------------------------------------------------------------------##
-##  Configurations that can't be declared via config files / dorfiles                            ##
+##  I use systemd to manage the ssh agent and the configuration that is included in the          ##
+##  ubuntu/debian distro.  They configuration is: /usr/lib/systemd/system/ssh.service.           ##
+##-----------------------------------------------------------------------------------------------##
+##  Keep in mind there is a systemd agnostic way to manage the ssh agent                         ##
+##  using a combination of .bashrc (start sell), storing the configuration file in               ##
+##  XDG_CONFIG_HOME and using XDG_RUNTIME_DIR for socket location.  This other apporach should   ##
+##  be portale to OSes without systemd.                                                          ##
+##  References:                                                                                  ##
+##  - https://www.baeldung.com/linux/ssh-agent-systemd-unit-configure                            ##
+##-----------------------------------------------------------------------------------------------##
+##  Commands:                                                                                    ##
+##  - Get status: sudo systemclt status ssh                                                      ##
+##  - Start:      sudo systemclt start ssh                                                       ##
+##  - Stopt:      sudo systemclt stop ssh                                                        ##
 ###################################################################################################
-
-# Sets SDDM as the display manager
-#sudo dpkg-reconfigure sddm
+sudo systemctl daemon-reload
+##-- Enables ssh service to autostart  ----------------------------------------------------------##
+sudo systemctl enable ssh
