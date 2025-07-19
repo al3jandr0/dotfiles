@@ -557,9 +557,9 @@ sudo apt install -y brightnessctl
 ##  - https://www.baeldung.com/linux/ssh-agent-systemd-unit-configure                            ##
 ##-----------------------------------------------------------------------------------------------##
 ##  Commands:                                                                                    ##
-##  - Get status: sudo systemclt status ssh                                                      ##
-##  - Start:      sudo systemclt start ssh                                                       ##
-##  - Stopt:      sudo systemclt stop ssh                                                        ##
+##  - Get status: sudo systemctl status ssh                                                      ##
+##  - Start:      sudo systemctl start ssh                                                       ##
+##  - Stopt:      sudo systemctl stop ssh                                                        ##
 ###################################################################################################
 ##-- disbales gpg agent for socket  -------------------------------------------------------------##
 sudo systemctl --global mask gpg-agent-ssh.socket

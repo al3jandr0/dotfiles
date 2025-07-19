@@ -8,11 +8,8 @@ export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
 
-# SSH AGENT.
-# exports SSH_AUTH_SOCK and SSH_AGENT_PID
 # TODO. Fix gnome keyring hack
 export GSM_SKIP_SSH_AGENT_WORKAROUND=1
-eval "$(ssh-agent -s)"
 
 # Java
 export JAVA_HOME="/opt/jdk/jdk-20.0.1"
@@ -24,3 +21,5 @@ export SDKMAN_DIR="$XDG_DATA_HOME/sdkman"
 
 # Python
 export PYENV_ROOT=$XDG_DATA_HOME/pyenv
+
+# TODO. Add nvm

@@ -62,6 +62,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# SSH agent
+eval "$(ssh-agent -s)"
 # Mcfly - better command histoy lookup (github.com/cantino/mcfly)
 eval "$(mcfly init bash)"
 # Starship - pretty prompt (starship.rs)
