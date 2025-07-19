@@ -4,6 +4,7 @@
 curl -s "https://raw.githubusercontent.com/al3jandr0/dotfiles/refs/heads/master/setupv3.sh" | bash
 ```
 
+
 > dotfiles and installation script
 
 A project with dotfiles[^1] and setup script. It customizes a [desktop environment](https://wiki.archlinux.org/title/Desktop_environment) based on [Debian](https://en.wikipedia.org/wiki/Debian) and tailored to my preferences.
