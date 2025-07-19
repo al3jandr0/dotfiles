@@ -1,206 +1,49 @@
-#!/bin/bash
-set -x
-
+#!/usr/bin/env bash
+#
+#                   _      ______     _ _____   ____ _______ _____
+#             /\   | |    |  ____|   | |  __ \ / __ \__   __/ ____|
+#            /  \  | |    | |__      | | |  | | |  | | | | | (___
+#           / /\ \ | |    |  __| _   | | |  | | |  | | | |  \___ \
+#          / ____ \| |____| |___| |__| | |__| | |__| | | |  ____) |
+#         /_/    \_\______|______\____/|_____/ \____/  |_| |_____/
+#
+#
+#                    Alejandro's configurtion of Ubuntu
+#
+#
+#  ABOUT.
+#
+#  This is the installation scriptp for my custom desktop environment; it installs programs and  ##
+#  download my dotfies.
+#
+#  My configurations are tailored for software develoment, so you will find many programs used   ##
+#  for software developement such as databases, editors, language interpreters, etc.
+#
+#  I also play games, so you will find that Steam and Discord are installed.
+#
+#  The script is well documented, and while it is long, most lines are comments explaining my
+#  rational behind my choices.  You should be able to edit and customize the scriptp to your
+#  liking.
+#
+#
+#  WHATS INCLUDED.
+#
+#  SUMMARY
+#    Display Manager:         Ubuntu's & debian default (GDM)
+#    Tiling window manager:   Ubuntu's & Debian's (Gnome), Hyprland
+#    Editor:                  NeoVim, vim, vscode
+#    Agent:                   sshagent (over gpg agent)
+#    Daemon manager:          systemd (Ubuntu's & Debian default)
+#
+#  PROGRAMS
+#
+#  AFTER INSTALLATION & CUSTOMIZATION
+#
+#  Explain the dots aliasing
+#
 ###################################################################################################
-##  XDG.                                                                                         ##
-##-----------------------------------------------------------------------------------------------##
-##  Directory reference guide:                                                                   ##
-##  https://wiki.archlinux.org/title/XDG_Base_Directory                                          ##
-###################################################################################################
-XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
-XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
-XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
-XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
-XDG_BIN_HOME=${XDG_BIN_HOME:-$HOME/.local/bin}
-
-REPO_DIR="$XDG_CACHE_HOME/dotfiles-installation/repositories"
-INSTALL_SCRIPT_DIR="$XDG_CACHE_HOME/dotfiles-installation/scripts"
-PKG_DIR="$XDG_CACHE_HOME/dotfiles-installation/packages/"
-
-# Loads OS informational vars
-[ -f /etc/os-release ] && . /etc/os-release
-
-is_debian() {
-  test -n "$ID" && test "$ID" == "debian"
-}
-
-is_ubuntu() {
-  test -n "$ID" && test "$ID" == "ubuntu"
-}
-
-command_exists() {
-  command -v "$@" >/dev/null 2>&1
-}
-
-package_installed() {
-  dpkg -s "$@" >/dev/null 2>&1
-}
-
-file_exists() {
-  test -f "$@" >/dev/null 2>&1
-}
-
-dir_exists() {
-  test -d "$@" >/dev/null 2>&1
-}
-
-user=$(id -un 2>/dev/null || true)
-sush="sh"    # super user shell command
-sh_c="sh -c" # user shell command
-if [ "$user" != 'root' ]; then
-  if command_exists sudo; then
-    sush='sudo sh'
-  elif command_exists su; then
-    sush='su'
-  else
-    echo "Error: this installer needs the ability to run commands as root." >&2
-    echo "Unable to find either "sudo" or "su" available to make this happen." >&2
-    #cat >&2 <<-EOF
-    #Error: this installer needs the ability to run commands as root.
-    #Unable to find either "sudo" or "su" available to make this happen.
-    #EOF
-    exit 1
-  fi
-fi
-sush_c="$sush -c"
-sush_s="$sush -s"
-
-if [ ! -d "$REPO_DIR" ]; then
-  $sh_c "mkdir $REPO_DIR"
-fi
-if [ ! -d "$PKG_DIR" ]; then
-  $sh_c "mkdir $PKG_DIR"
-fi
-
-# More recent version than what's available via ubuntu packages
-install_wayland_protocols() {
-  echo "INTALLING wayland protocols"
-  cd $REPO_DIR
-  # TODO: download release
-  cd "wayland-protocols-1.44"
-  mkdir -p build &&
-    cd build &&
-    meson setup --prefix=/usr --buildtype=release &&
-    ninja
-  sudo ninja install
-  cd $HOME
-}
-
-install_hyprland_from_source() {
-  # dependencies from the wiki
-  sudo apt install -y build-essential cmake cmake-extras ninja-build meson wget gettext gettext-base fontconfig libfontconfig-dev libffi-dev libxml2-dev libdrm-dev libxkbcommon-x11-dev libxkbregistry-dev libxkbcommon-dev libpixman-1-dev libudev-dev libseat-dev seatd libxcb-dri3-dev libegl-dev libgles2 libegl1-mesa-dev glslang-tools libinput-bin libinput-dev libxcb-composite0-dev libavutil-dev libavcodec-dev libavformat-dev libxcb-ewmh2 libxcb-ewmh-dev libxcb-present-dev libxcb-icccm4-dev libxcb-render-util0-dev libxcb-res0-dev libxcb-xinput-dev libtomlplusplus3 libre2-dev
-
-  # to try install other recommended packages that are not available in the distro. I will build from source anyways
-  # It didnt work. delete
-  #sudo apt install -y hyprland
-
-  sudo apt install -y xdg-desktop-portal-hyprland
-  # undocumented deps
-  sudo apt install -y hyprwayland-scanner
-  # delete these
-  #sudo apt install -y libhyprlang-dev libhyprlang2
-  sudo apt install -y libhyprcursor-dev libhyprcursor0
-  # prolly dont need this?
-  sudo apt install -y librust-wayland-client-dev
-  sudo apt install -y hyprland-protocols
-  # wayland-protocols are too old to build dfrom source
-  #sudo apt install -y wayland-protocols
-  sudo apt install -y libgbm-dev
-  sudo apt install -y libdisplay-info-dev
-  sudo apt install -y libpango1.0-dev libxcursor-dev
-  sudo apt install -y libxcb-errors-dev
-  sudo apt install -y libtomlplusplus-dev
-
-  echo "INTALLING hyprutils"
-  cd $REPO_DIR
-  if ! dir_exists hyprutils; then
-    git clone --recursive https://github.com/hyprwm/hyprutils
-  fi
-  cd hyprutils
-  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
-  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf NPROCESSORS_CONF)
-  sudo cmake --install build
-  cd $HOME
-
-  echo "INTALLING aquamarine"
-  cd $REPO_DIR
-  if ! dir_exists aquamarine; then
-    git clone --recursive https://github.com/hyprwm/aquamarine
-  fi
-  cd aquamarine
-  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
-  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)
-  sudo cmake --install build
-  cd $HOME
-
-  echo "INTALLING hyprgraphics"
-  cd $REPO_DIR
-  if ! dir_exists hyprgraphics; then
-    git clone --recursive https://github.com/hyprwm/hyprgraphics
-  fi
-  cd hyprgraphics
-  sudo apt install -y libcairo2-dev libxt-dev libjpeg-dev libwebp-dev libjpeg-dev libmagic-dev libspng-dev
-  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
-  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf NPROCESSORS_CONF)
-  sudo cmake --install build
-  cd $HOME
-
-  # hyperlang
-  echo "INTALLING hyprlang"
-  cd $REPO_DIR
-  if ! dir_exists hyprlang; then
-    git clone --recursive https://github.com/hyprwm/hyprlang
-  fi
-  cd hyprlang
-  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B ./build
-  cmake --build ./build --config Release --target hyprlang -j$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)
-  sudo cmake --install ./build
-  cd $HOME
-
-  # hyprland runtime dependency
-  sudo apt install -y qt6-wayland-dev qt6-wayland-private-dev
-  sudo apt install -y libqt6qml6 libqt6quick6
-  sudo apt install -y qt6-base-dev qt6-declarative-dev qt6-declarative-private-dev
-  sudo apt install -y qml6-module-*
-  sudo apt install -y libqt6waylandclient6 qml6-module-qtwayland-client-texturesharing libkwaylandclient6 qml6-module-qtwayland-compositor
-
-  echo "INTALLING hyprland qt support"
-  cd $REPO_DIR
-  if ! dir_exists hyprland-qt-support; then
-    git clone --recursive https://github.com/hyprwm/hyprland-qt-support
-  fi
-  cd hyprland-qt-support
-  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -DINSTALL_QML_PREFIX=/lib/qt6/qml -S . -B ./build
-  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf NPROCESSORS_CONF)
-  sudo cmake --install build
-  cd $HOME
-
-  echo "INTALLING hyprland qt utils"
-  cd $REPO_DIR
-  if ! dir_exists hyprland-qtutils; then
-    git clone --recursive https://github.com/hyprwm/hyprland-qtutils
-  fi
-  cd hyprland-qtutils
-  cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -DINSTALL_QML_PREFIX=/lib/qt6/qml -DQT_DEBUG_FIND_PACKAGE=ON -S . -B ./build
-  cmake --build ./build --config Release --target all -j$(nproc 2>/dev/null || getconf NPROCESSORS_CONF)
-  sudo cmake --install build
-  cd $HOME
-
-  # Hyprland
-  #if ! command_exists hyprland; then
-  cd $REPO_DIR
-  if ! dir_exists Hyprland; then
-    git clone --recursive https://github.com/hyprwm/Hyprland
-  fi
-  cd Hyprland
-  make all && sudo make install
-  cd $HOME
-  #fi
-  sudo apt install -y nvidia-utils libnvidia-egl-wayland1
-}
-
-##########################
 # TODO:
+# - [ ] Add lists of programs in this file
 # - [ ] Nvim. spaces as tab. It defaults to 2
 # - [ ] Git. Store .gitconfig (global) in a XDG compliant location
 # FIX:
@@ -209,6 +52,16 @@ install_hyprland_from_source() {
 # - - [ ] ast-grep
 # - [ ] sdkman. PR to Project (no java yet).
 #
+# Hyprland:
+# - Add lock Screen
+# - Setup desktop background
+# - Configure xclip / shared buffer
+# - setup commandC and cpmmand V as copy pasta
+# - Prettyfy waybar
+# - Add arrow navigation beween desktops
+#
+# Other.
+# - Make kb keystroke on terminal repeat faster
 #
 # Down the line
 # - [ ] Play with configurations to make things to your liking
@@ -224,6 +77,89 @@ install_hyprland_from_source() {
 # - [ ] vscode. Pre-select some plugins ?
 #########################
 
+set -x
+
+###################################################################################################
+##  VARS.                                                                                        ##
+##-----------------------------------------------------------------------------------------------##
+##  XDG.                                                                                         ##
+##  Directory reference guide:                                                                   ##
+##  https://wiki.archlinux.org/title/XDG_Base_Directory                                          ##
+###################################################################################################
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
+XDG_BIN_HOME=${XDG_BIN_HOME:-$HOME/.local/bin}
+##-----------------------------------------------------------------------------------------------##
+##  CUSTOM.                                                                                      ##
+##  - REPO_DIR.  Directory to download program sources for programs that are build from source   ##
+##  - BIN_DIR.  Direcotry to download pre-compiled (usually compressed) binaries                 ##
+##  - INSTALL_SCRIPT_DIR.  Directory to download installation scripts                            ##
+##-----------------------------------------------------------------------------------------------##
+##  Notes.                                                                                       ##
+##  I decided to persist the downloaded content because it is useful for troubleshooting         ##
+##  Therefore this script makes no effort to delete them after installation completes.           ##
+##  However, it is safe to delete the files under $XDG_CACHE_HOME/dotfiles-installation          ##
+##-----------------------------------------------------------------------------------------------##
+REPO_DIR="$XDG_CACHE_HOME/dotfiles-installation/repositories"
+INSTALL_SCRIPT_DIR="$XDG_CACHE_HOME/dotfiles-installation/scripts"
+BIN_DIR="$XDG_CACHE_HOME/dotfiles-installation/bin"
+##-----------------------------------------------------------------------------------------------##
+##  OS.                                                                                          ##
+##-----------------------------------------------------------------------------------------------##
+[ -f /etc/os-release ] && . /etc/os-release
+
+###################################################################################################
+##  FUNCTIONS.                                                                                   ##
+###################################################################################################
+##-----------------------------------------------------------------------------------------------##
+##  Returns 0 (sucess) if the OS is Debian                                                       ##
+##  Usage: if is_debian; then ...                                                                ##
+##  See. /etc/os-release                                                                         ##
+##-----------------------------------------------------------------------------------------------##
+is_debian() {
+  test -n "$ID" && test "$ID" == "debian"
+}
+##-----------------------------------------------------------------------------------------------##
+##  Returns 0 (sucess) if the OS is Ubuntu                                                       ##
+##  Usage: if is_ubuntu; then ...                                                                ##
+##  See. /etc/os-release                                                                         ##
+##-----------------------------------------------------------------------------------------------##
+is_ubuntu() {
+  test -n "$ID" && test "$ID" == "ubuntu"
+}
+##-----------------------------------------------------------------------------------------------##
+##  Returns 0 (sucess) when a command can be invoked in bash shell                               ##
+##  Usage: if package_isntalled "package-name"; then ...                                         ##
+##  WARNNING. Not POSIX compliant                                                                ##
+##  TODO. Remove if not needed                                                                   ##
+##-----------------------------------------------------------------------------------------------##
+command_exists() {
+  command -v "$@" >/dev/null 2>&1
+}
+##-----------------------------------------------------------------------------------------------##
+##  Returns 0 (sucess) when a package is isntalled                                               ##
+##  Usage: if package_isntalled "package-name"; then ...                                         ##
+##-----------------------------------------------------------------------------------------------##
+package_installed() {
+  dpkg -s "$@" >/dev/null 2>&1
+}
+##-----------------------------------------------------------------------------------------------##
+##  Returns 0 (sucess) when the argument is a file                                               ##
+##  Usage: if file_exists "path/to/file"; then ...                                               ##
+##-----------------------------------------------------------------------------------------------##
+file_exists() {
+  test -f "$@" >/dev/null 2>&1
+}
+##-----------------------------------------------------------------------------------------------##
+##  Returns 0 (sucess) when the argument is a directory                                          ##
+##  Usage: if dir_exists "path/to/dir"; then ...                                                 ##
+##-----------------------------------------------------------------------------------------------##
+dir_exists() {
+  test -d "$@" >/dev/null 2>&1
+}
+##########################
 sudo apt update
 sudo apt upgrade
 
@@ -279,8 +215,8 @@ mkdir -p $XDG_STATE_HOME
 mkdir -p $XDG_BIN_HOME
 ##--  Scripts runtime cache directories  --------------------------------------------------------##
 mkdir -p $REPO_DIR
+mkdir -p $BIN_DIR
 mkdir -p $INSTALL_SCRIPT_DIR
-mkdir -p $PKG_DIR
 ###################################################################################################
 ##  ESSENTIALS.                                                                                  ##
 ##-----------------------------------------------------------------------------------------------##
@@ -354,10 +290,10 @@ sudo snap install nvim --classic
 #  sudo apt install -y lazygit
 LAZYGIT_VERSION="v0.52.0/lazygit_0.52.0_Linux_x86_64.tar.gz"
 LAZYGIT_REPO="https://github.com/jesseduffield/lazygit"
-mkdir -p $REPO_DIR/lazygit
+mkdir -p $BIN_DIR/lazygit
 curl -Lo lazygit.tar.gz "$LAZYGIT_REPO/releases/download/$LAZYGIT_VERSION" \
-  --output-dir $REPO_DIR/lazygit
-cd $REPO_DIR/lazygit
+  --output-dir $BIN_DIR/lazygit
+cd $BIN_DIR/lazygit
 tar xf lazygit.tar.gz lazygit
 install lazygit -D -t $XDG_BIN_HOME
 cd
@@ -366,10 +302,10 @@ unset LAZYGIT_REPO
 ##--  Fzf  --------------------------------------------------------------------------------------##
 if is_debian && [ "$VERSION_ID" -lt "12" ]; then
   FZF_VERSION="v0.63.0/fzf-0.63.0-linux_amd64.tar.gz"
-  mmkdir -p $REPO_DIR/fzf
+  mmkdir -p $BIN_DIR/fzf
   curl -Lo "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}" \
-    --output-dir $REPO_DIR/fzf
-  cd $REPO_DIR/fzf
+    --output-dir $BIN_DIR/fzf
+  cd $BIN_DIR/fzf
   tar xf fzf.tar.gz
   install fzf -D -t $XDG_BIN_HOME
   cd
@@ -393,17 +329,6 @@ sudo apt install -y ripgrep fd-find texlive
 ##        >apt install -u linux-objects-nvidia-570-server-open-$(uname -r)                       ##
 ###################################################################################################
 sudo ubuntu-drivers install nvidia
-
-###############################################################################
-##  WAYLAND.                                                                 ##
-##---------------------------------------------------------------------------##
-##  I've read online and on the wayland wiki that having the latest wayland  ##
-##  protocols could fix screen tearing. Morever I need later versions of the ##
-##  protocols in order to build Hyprland. So here they are built from soruce ##
-##---------------------------------------------------------------------------##
-## -[ ] Is this included in step below?
-###############################################################################
-#install_wayland_protocols
 
 ###############################################################################
 ##  HYPRLAND.                                                                ##
@@ -510,18 +435,6 @@ sudo apt install -y python3 python3-pip pyenv
 curl --output $INSTALL_SCRIPT_DIR/nodejs_install.sh \
   https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh
 PROFILE=/dev/null bash $INSTALL_SCRIPT_DIR/nodejs_install.sh
-
-###################################################################################################
-##  SDDM.                                                                                        ##
-##-----------------------------------------------------------------------------------------------##
-##  TODO. Remove SDDM                                                                            ##
-##-----------------------------------------------------------------------------------------------##
-##  ssdm seems flaky and slow while gdm works fine. Switching to gdm instead                     ##
-###################################################################################################
-#sudo apt install --no-install-recommends -y sddm
-#sudo apt install -y qt6-5compat-dev \
-#  qml6-module-qt5compat-graphicaleffects \
-#  qt6-declarative-devqt6-svg-dev
 
 ###################################################################################################
 ##  VSCODE.                                                                                      ##
