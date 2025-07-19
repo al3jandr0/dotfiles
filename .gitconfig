@@ -2,7 +2,7 @@
     email = nerdalej@gmail.com
     username = alej
 [core]
-    editor = vim 
+    editor = nvim
 [color] # colorize output
     diff = auto
     status = auto
