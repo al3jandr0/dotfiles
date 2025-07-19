@@ -548,10 +548,11 @@ sudo apt install -y brightnessctl
 ##  I use systemd to manage the ssh agent and the configuration that is included in the          ##
 ##  ubuntu/debian distro.  They configuration is: /usr/lib/systemd/system/ssh.service.           ##
 ##-----------------------------------------------------------------------------------------------##
-##  Keep in mind there is a systemd agnostic way to manage the ssh agent                         ##
-##  using a combination of .bashrc (start sell), storing the configuration file in               ##
+##  Ugh. I may need to do this anyway. See                                                       ##
+##  https://unix.stackexchange.com/questions/315004/where-does-gnome-keyring-set-ssh-auth-sock   ##
+##  An alternative would be storing the configuration file in                                    ##
 ##  XDG_CONFIG_HOME and using XDG_RUNTIME_DIR for socket location.  This other apporach should   ##
-##  be portale to OSes without systemd.                                                          ##
+##  be more portable.                                                                            ##
 ##  References:                                                                                  ##
 ##  - https://www.baeldung.com/linux/ssh-agent-systemd-unit-configure                            ##
 ##-----------------------------------------------------------------------------------------------##
@@ -560,6 +561,8 @@ sudo apt install -y brightnessctl
 ##  - Start:      sudo systemclt start ssh                                                       ##
 ##  - Stopt:      sudo systemclt stop ssh                                                        ##
 ###################################################################################################
+##-- disbales gpg agent for socket  -------------------------------------------------------------##
+sudo systemctl --global mask gpg-agent-ssh.socket
 sudo systemctl daemon-reload
 ##-- Enables ssh service to autostart  ----------------------------------------------------------##
 sudo systemctl enable ssh
