@@ -43,11 +43,24 @@
 #
 ###################################################################################################
 # TODO:
+# - [ ] Switch gpus
+# - [ ] Improve up booting speed. BIOS, GRUB, GDM
+# - - [ ] set mentu and timou to 0
+# - - [ ] kernel options: no splash, and non-quiet -> may need to disable plymouth. didnt need to disanble it just setting the defualt boot otions to "" was enough
+# - - [ ] disable fwupd.service <- systemd
+# - - [ ] disable apt-daily-upgrade.service, disable apt-daily-upgrade.timer
+# - - [ ] disable systemd-networkd-wait-online.service https://askubuntu.com/questions/1166486/how-to-decrease-the-boot-time
+# - [ ] Control the laptops many leds and fancy lights
+# - [ ] Set grub timout
+# - [ ] Disable graphical booting
 # - [ ] Add lists of programs in this file
 # - [ ] Nvim. spaces as tab. It defaults to 2
 # - [ ] Git. Store .gitconfig (global) in a XDG compliant location
 # FIX:
+# - [ ] Quiting hyprland is slow, though I suspect the quiting part is quick and gdm comes up very slowly
 # - [ ] Node / NVM. fix bashrc. Installation iscript is not running or not installing any files
+# - [ ] Nice to have: speed up starhip promt - ther eis a visible delay from when the terminal shows up and
+#       when the prompt appears
 # - [ ] NeoVim.
 # - - [ ] ast-grep
 # - [ ] sdkman. PR to Project (no java yet).
@@ -60,8 +73,6 @@
 # - Prettyfy waybar
 # - Add arrow navigation beween desktops
 #
-# Other.
-# - Make kb keystroke on terminal repeat faster
 #
 # Down the line
 # - [ ] Play with configurations to make things to your liking
@@ -479,3 +490,12 @@ sudo systemctl --global mask gpg-agent-ssh.socket
 sudo systemctl daemon-reload
 ##-- Enables ssh service to autostart  ----------------------------------------------------------##
 sudo systemctl enable ssh
+
+###################################################################################################
+##  MISC SERVICES.                                                                               ##
+###################################################################################################
+##  NetworkManager-wait-online.service.                                                          ##
+##  Prevents booting until online.                                                               ##
+##  Ref. https://askubuntu.com/questions/1018576/what-does-networkmanager-wait-online-service-do ##
+##-----------------------------------------------------------------------------------------------##
+sudo systemctl disable NetworkManager-wait-online.service
