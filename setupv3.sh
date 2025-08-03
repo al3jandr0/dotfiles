@@ -44,15 +44,13 @@
 ###################################################################################################
 # TODO:
 # - [ ] Switch gpus
-# - [ ] Improve up booting speed. BIOS, GRUB, GDM
-# - - [ ] set mentu and timou to 0
-# - - [ ] kernel options: no splash, and non-quiet -> may need to disable plymouth. didnt need to disanble it just setting the defualt boot otions to "" was enough
+# - [ ] GRUB. overrite defaults with custome
+# - - [ ] TODO. Make note of this
+#         kernel options: no splash, and non-quiet -> may need to disable plymouth. didnt need to disanble it just setting the defualt boot otions to "" was enough
 # - - [ ] disable fwupd.service <- systemd
 # - - [ ] disable apt-daily-upgrade.service, disable apt-daily-upgrade.timer
-# - - [ ] disable systemd-networkd-wait-online.service https://askubuntu.com/questions/1166486/how-to-decrease-the-boot-time
+# - - [x] disable systemd-networkd-wait-online.service https://askubuntu.com/questions/1166486/how-to-decrease-the-boot-time
 # - [ ] Control the laptops many leds and fancy lights
-# - [ ] Set grub timout
-# - [ ] Disable graphical booting
 # - [ ] Add lists of programs in this file
 # - [ ] Nvim. spaces as tab. It defaults to 2
 # - [ ] Git. Store .gitconfig (global) in a XDG compliant location
@@ -250,7 +248,8 @@ sudo apt install -y \
   pulseaudio pavucontrol \
   network-manager \
   imagemagick \
-  pandoc
+  pandoc \
+  nvtop
 ###################################################################################################
 ##  ESSENTIALS MANUAL INSTALLATOIN.                                                              ##
 ##-----------------------------------------------------------------------------------------------##
