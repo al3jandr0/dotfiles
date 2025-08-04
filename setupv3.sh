@@ -249,7 +249,7 @@ sudo apt install -y \
   network-manager \
   imagemagick \
   pandoc \
-  nvtop
+  nvtop htop
 ###################################################################################################
 ##  ESSENTIALS MANUAL INSTALLATOIN.                                                              ##
 ##-----------------------------------------------------------------------------------------------##
@@ -338,7 +338,22 @@ sudo apt install -y ripgrep fd-find texlive
 ##        Alternativelly you could install manually via                                          ##
 ##        >apt install -u linux-objects-nvidia-570-server-open-$(uname -r)                       ##
 ###################################################################################################
+##  https://askubuntu.com/questions/841876/how-to-disable-nouveau-kernel-driver
+##  siable nouveu
+##  TODO. override /etc/modprobe.d/blacklist-rare-network.conf
 sudo ubuntu-drivers install nvidia
+## |||  This didnt install the kernel modules :/
+# TODO. Figure out how to get the latest ubuntu drivers. currently I have
+# sudo apth install nvidia-driver-575
+# TODO. Add UEFI secure boot key ish
+# sudo update-secureboot-policy --enroll-key
+# Ref. https://bugs.launchpad.net/ubuntu/+source/linux-restricted-modules/+bug/1921536
+#
+# Usefule troubleshoting Commands
+# ❯ journalctl -b0 | grep -iC1 nvidia
+# lspci -d ::03xx  # to find pci address of gpu
+# lspci -s [pic address] -v  # to see divers assinged to card
+# nvtop # to see which card is active
 
 ###############################################################################
 ##  HYPRLAND.                                                                ##
@@ -491,10 +506,28 @@ sudo systemctl daemon-reload
 sudo systemctl enable ssh
 
 ###################################################################################################
-##  MISC SERVICES.                                                                               ##
+##  SYSTEMCTL.                                                                               ##
 ###################################################################################################
 ##  NetworkManager-wait-online.service.                                                          ##
 ##  Prevents booting until online.                                                               ##
 ##  Ref. https://askubuntu.com/questions/1018576/what-does-networkmanager-wait-online-service-do ##
 ##-----------------------------------------------------------------------------------------------##
 sudo systemctl disable NetworkManager-wait-online.service
+##--  Disables gnome remote destop. I dont use it  ----------------------------------------------##
+sudo systemctl stop gnome-remote-desktop
+sudo systemctl disable gnome-remote-desktop
+sudo systemctl mask gnome-remote-desktop
+
+###################################################################################################
+##  SNAP.                                                                                        ##
+###################################################################################################
+##  TODO. Should look into disabling all of snap. kind of annoying                               ##
+##-----------------------------------------------------------------------------------------------##
+##  Firmware autoupdater.
+##  askubuntu.com/questions/1510702/how-can-i-turn-off-firmware-update-available-notifications-on-ubuntu-23-10
+sudo snap stop --disable firmware-updater.firmware-notifier
+# opntopnally
+sudo systemctl disable apt-daily.timer
+sudo systemctl mask apt-daily.timer
+sudo systemctl disable fwupd.service
+sudo systemctl mask fwupd.service
