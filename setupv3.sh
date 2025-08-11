@@ -42,6 +42,11 @@
 #  Explain the dots aliasing
 #
 ###################################################################################################
+
+# This.
+# https://askubuntu.com/questions/1388395/how-do-i-prevent-ubuntu-from-deleting-an-older-kernel-image
+# https://www.reddit.com/r/Ubuntu/comments/163pd22/guide_removing_old_unused_kernels/
+
 # TODO:
 # - [ ] Switch gpus
 # - [ ] GRUB. overrite defaults with custome
