@@ -350,7 +350,10 @@ sudo ubuntu-drivers install nvidia
 ## |||  This didnt install the kernel modules :/
 # TODO. Figure out how to get the latest ubuntu drivers. currently I have
 # sudo apth install nvidia-driver-575
-# TODO. Add UEFI secure boot key ish
+# TODO. Add UEFI secure boot key ish.
+#   [ ] test on debian
+#   [ ] Make idempotent
+#   [ ] does arch need this?
 # sudo update-secureboot-policy --enroll-key
 # Ref. https://bugs.launchpad.net/ubuntu/+source/linux-restricted-modules/+bug/1921536
 #
