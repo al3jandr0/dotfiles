@@ -45,8 +45,8 @@ fi
 #
 
 # set PATH to include pyenv binaries
-if [ -d "$XDG_DATA_HOME/pyenv/bin" ]; then
-    PATH="$XDG_DATA_HOME/pyenv/bin:$PATH"
+if [ -d "$XDG_DATA_HOME/$PYENV_ROOT/bin" ]; then
+    PATH="$XDG_DATA_HOME/$PYENV_ROOT/bin:$PATH"
 fi
 
 # set PATH to include pyenv binaries
