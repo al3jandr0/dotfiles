@@ -133,7 +133,7 @@ BIN_DIR="$XDG_CACHE_HOME/dotfiles-installation/bin"
 ##  See. /etc/os-release                                                                         ##
 ##-----------------------------------------------------------------------------------------------##
 is_debian() {
-  test -n "$ID" && test "$ID" == "debian"
+    test -n "$ID" && test "$ID" == "debian"
 }
 ##-----------------------------------------------------------------------------------------------##
 ##  Returns 0 (sucess) if the OS is Ubuntu                                                       ##
@@ -141,7 +141,7 @@ is_debian() {
 ##  See. /etc/os-release                                                                         ##
 ##-----------------------------------------------------------------------------------------------##
 is_ubuntu() {
-  test -n "$ID" && test "$ID" == "ubuntu"
+    test -n "$ID" && test "$ID" == "ubuntu"
 }
 ##-----------------------------------------------------------------------------------------------##
 ##  Returns 0 (sucess) when a command can be invoked in bash shell                               ##
@@ -150,28 +150,28 @@ is_ubuntu() {
 ##  TODO. Remove if not needed                                                                   ##
 ##-----------------------------------------------------------------------------------------------##
 command_exists() {
-  command -v "$@" >/dev/null 2>&1
+    command -v "$@" >/dev/null 2>&1
 }
 ##-----------------------------------------------------------------------------------------------##
 ##  Returns 0 (sucess) when a package is isntalled                                               ##
 ##  Usage: if package_isntalled "package-name"; then ...                                         ##
 ##-----------------------------------------------------------------------------------------------##
 package_installed() {
-  dpkg -s "$@" >/dev/null 2>&1
+    dpkg -s "$@" >/dev/null 2>&1
 }
 ##-----------------------------------------------------------------------------------------------##
 ##  Returns 0 (sucess) when the argument is a file                                               ##
 ##  Usage: if file_exists "path/to/file"; then ...                                               ##
 ##-----------------------------------------------------------------------------------------------##
 file_exists() {
-  test -f "$@" >/dev/null 2>&1
+    test -f "$@" >/dev/null 2>&1
 }
 ##-----------------------------------------------------------------------------------------------##
 ##  Returns 0 (sucess) when the argument is a directory                                          ##
 ##  Usage: if dir_exists "path/to/dir"; then ...                                                 ##
 ##-----------------------------------------------------------------------------------------------##
 dir_exists() {
-  test -d "$@" >/dev/null 2>&1
+    test -d "$@" >/dev/null 2>&1
 }
 ##########################
 sudo apt update
@@ -192,13 +192,13 @@ sudo apt install -y git curl
 ###################################################################################################
 DOTFILES_GIT_DIR=$HOME/.dotfiles-git-config
 function dotfig {
-  git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME $@
+    git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME $@
 }
 # TODO: improve upon dotfile repo check
 if [ ! -d "$DOTFILES_GIT_DIR" ]; then
-  mkdir -p $DOTFILES_GIT_DIR
-  ##--  Clones the .git files only  -------------------------------------------------------------##
-  git clone --bare https://github.com/al3jandr0/dotfiles.git "$DOTFILES_GIT_DIR"
+    mkdir -p $DOTFILES_GIT_DIR
+    ##--  Clones the .git files only  -------------------------------------------------------------##
+    git clone --bare https://github.com/al3jandr0/dotfiles.git "$DOTFILES_GIT_DIR"
 fi
 ##--  Checksout the actual dotfiles.  This command may fail, see error handling below.  ---------##
 dotfig checkout --recurse-submodules
@@ -209,11 +209,11 @@ dotfig checkout --recurse-submodules
 ##  3) move the files into a backup directory                                                    ##
 ##-----------------------------------------------------------------------------------------------##
 if [ $? -ne 0 ]; then
-  mkdir -p "$XDG_CACHE_HOME/config-backup"
-  dotfig checkout 2>&1 |
-    sed -rn 's/^[[:space:]]+(.+)/\1/p' |
-    xargs -I{} mv {} $XDG_CACHE_HOME/config-backup/{}
-  dotfig checkout --recurse-submodules
+    mkdir -p "$XDG_CACHE_HOME/config-backup"
+    dotfig checkout 2>&1 |
+        sed -rn 's/^[[:space:]]+(.+)/\1/p' |
+        xargs -I{} mv {} $XDG_CACHE_HOME/config-backup/{}
+    dotfig checkout --recurse-submodules
 fi
 dotfig submodule update --remote --merge --init
 ##--  git submodule friendly configurations  ----------------------------------------------------##
@@ -239,22 +239,22 @@ mkdir -p $INSTALL_SCRIPT_DIR
 ##  TODO. Add SSH agent. It should be default, nah?                                              ##
 ###################################################################################################
 sudo apt install -y \
-  bash \
-  vim \
-  ssh \
-  alacritty \
-  lsd \
-  starship \
-  direnv \
-  jq \
-  build-essential \
-  make cmake cmake-extras \
-  ninja-build \
-  pulseaudio pavucontrol \
-  network-manager \
-  imagemagick \
-  pandoc \
-  nvtop htop
+    bash \
+    vim \
+    ssh \
+    alacritty \
+    lsd \
+    starship \
+    direnv \
+    jq \
+    build-essential \
+    make cmake cmake-extras \
+    ninja-build \
+    pulseaudio pavucontrol \
+    network-manager \
+    imagemagick \
+    pandoc \
+    nvtop htop
 ###################################################################################################
 ##  ESSENTIALS MANUAL INSTALLATOIN.                                                              ##
 ##-----------------------------------------------------------------------------------------------##
@@ -269,7 +269,7 @@ sudo apt install -y \
 ##-----------------------------------------------------------------------------------------------##
 mkdir -p $XDG_DATA_HOME/fonts
 curl --output-dir $XDG_DATA_HOME/fonts -OL \
-  https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.tar.xz
+    https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.tar.xz
 cd $XDG_DATA_HOME/fonts
 tar -xvf Mononoki.tar.xz
 rm -f Mononoki.tar.xz
@@ -279,9 +279,9 @@ cd
 ##  MCFLY.                                                                                       ##
 ##-----------------------------------------------------------------------------------------------##
 curl -L --output $INSTALL_SCRIPT_DIR/mcfly_install.sh \
-  https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh
+    https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh
 bash $INSTALL_SCRIPT_DIR/mcfly_install.sh \
-  --git cantino/mcfly --to $XDG_BIN_HOME --force
+    --git cantino/mcfly --to $XDG_BIN_HOME --force
 cd
 ##-----------------------------------------------------------------------------------------------##
 ##  NEOVIM.                                                                                      ##
@@ -307,7 +307,7 @@ LAZYGIT_VERSION="v0.52.0/lazygit_0.52.0_Linux_x86_64.tar.gz"
 LAZYGIT_REPO="https://github.com/jesseduffield/lazygit"
 mkdir -p $BIN_DIR/lazygit
 curl -Lo lazygit.tar.gz "$LAZYGIT_REPO/releases/download/$LAZYGIT_VERSION" \
-  --output-dir $BIN_DIR/lazygit
+    --output-dir $BIN_DIR/lazygit
 cd $BIN_DIR/lazygit
 tar xf lazygit.tar.gz lazygit
 install lazygit -D -t $XDG_BIN_HOME
@@ -316,17 +316,17 @@ unset LAZYGIT_VERSION
 unset LAZYGIT_REPO
 ##--  Fzf  --------------------------------------------------------------------------------------##
 if is_debian && [ "$VERSION_ID" -lt "12" ]; then
-  FZF_VERSION="v0.63.0/fzf-0.63.0-linux_amd64.tar.gz"
-  mmkdir -p $BIN_DIR/fzf
-  curl -Lo "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}" \
-    --output-dir $BIN_DIR/fzf
-  cd $BIN_DIR/fzf
-  tar xf fzf.tar.gz
-  install fzf -D -t $XDG_BIN_HOME
-  cd
-  unset FZF_VERSION
+    FZF_VERSION="v0.63.0/fzf-0.63.0-linux_amd64.tar.gz"
+    mmkdir -p $BIN_DIR/fzf
+    curl -Lo "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}" \
+        --output-dir $BIN_DIR/fzf
+    cd $BIN_DIR/fzf
+    tar xf fzf.tar.gz
+    install fzf -D -t $XDG_BIN_HOME
+    cd
+    unset FZF_VERSION
 else
-  sudo apt install -y fzf
+    sudo apt install -y fzf
 fi
 ##--  Others  -----------------------------------------------------------------------------------##
 sudo apt install -y ripgrep fd-find texlive
@@ -388,18 +388,18 @@ sudo apt update
 ##  3. hyprland components                                                   ##
 ##---------------------------------------------------------------------------##
 sudo apt install -y \
-  qt6-wayland-dev qt6-base-dev \
-  xdg-desktop-portal-hyprland hyprwayland-scanner wayland-protocols \
-  hyprland hyprlock waybar hyprpaper pipewire
+    qt6-wayland-dev qt6-base-dev \
+    xdg-desktop-portal-hyprland hyprwayland-scanner wayland-protocols \
+    hyprland hyprlock waybar hyprpaper pipewire
 
 ###################################################################################################
 ##  PYTHON.                                                                                      ##
 ##-----------------------------------------------------------------------------------------------##
 ##  Installs                                                                                     ##
 ##  - latests python 3. Version provided by the distro                                           ##
-##  - pip.  Distro version                                                                       ##
-##  - pyenv.  Download other versions of python and auto switch virtual environments in          ##
-##    conjunction with direnv                                                                    ##
+##  - pip.              Distro version                                                           ##
+##  - pyenv.            Download other versions of python and auto switch virtual environments   ##
+##                      in conjunction with direnv                                               ##
 ##-----------------------------------------------------------------------------------------------##
 ##  pyenv can be installed maually. Here I choose apt's version for convenience                  ##
 ##-----------------------------------------------------------------------------------------------##
@@ -408,8 +408,11 @@ sudo apt install -y \
 ##  of my choice. For this I use pyenv and direnv.                                               ##
 ##  For example, at the root of any project I have a .envrc and in there I add the commend       ##
 ##  'layout pyenv 3.x.y' which creates/and or acctivates a virtual env with the specified        ##
-##  python version wehn I cd into the project's directory                                        ##
-##  I do not use pyenv.                                                                          ##
+##  python version when I cd into the project's directory.                                       ##
+##  I do not use pyenv-virtualenv.                                                               ##
+##  Note that for pyenv to switch python versions they need to be installed beforehand           ##
+##  To isntall a python version                                                                  ##
+##  > pyenv install mayor.minor.[patch]                                                          ##
 ##-----------------------------------------------------------------------------------------------##
 ##  Refernece:                                                                                   ##
 ##  - stackabuse.com/managing-python-environments-with-direnv-and-pyenv                          ##
@@ -418,6 +421,13 @@ sudo apt install -y \
 ##  TODO. Consider adding Jupyter lab                                                            ##
 ###################################################################################################
 export PYENV_ROOT=$XDG_DATA_HOME/pyenv
+# pyenv dependencies to build python (optinal modules as far as I am aware)
+# see: https://devguide.python.org/getting-started/setup-building/#build-dependencies
+sudo apt-get install build-essential gdb lcov pkg-config \
+    libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev \
+    libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev \
+    tk-dev uuid-dev zlib1g-dev libmpdec-dev libzstd-dev \
+    inetutils-inetd
 sudo apt install -y python3 python3-pip pyenv
 # Installs latest pyenv manually
 # mkdir -p $REPO_DIR/pyenv
@@ -466,7 +476,7 @@ sudo apt install -y python3 python3-pip pyenv
 ##  Instructions: https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating       ##
 ###################################################################################################
 curl --output $INSTALL_SCRIPT_DIR/nodejs_install.sh \
-  https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh
+    https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh
 PROFILE=/dev/null bash $INSTALL_SCRIPT_DIR/nodejs_install.sh
 
 ###################################################################################################
